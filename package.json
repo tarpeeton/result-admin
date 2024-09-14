@@ -1,0 +1,47 @@
+{
+  "name": "result",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.13.3",
+    "@emotion/styled": "^11.13.0",
+    "@mui/material": "^6.1.0",
+    "@pbe/react-yandex-maps": "^1.2.5",
+    "accept-language": "^3.0.20",
+    "axios": "^1.7.7",
+    "country-flag-icons": "^1.5.13",
+    "framer-motion": "^11.5.4",
+    "gsap": "^3.12.5",
+    "i18next": "^23.14.0",
+    "i18next-browser-languagedetector": "^8.0.0",
+    "i18next-resources-to-backend": "^1.2.1",
+    "js-cookie": "^3.0.5",
+    "next": "14.2.7",
+    "react": "^18",
+    "react-cookie": "^7.2.0",
+    "react-countup": "^6.5.3",
+    "react-dom": "^18",
+    "react-i18next": "^15.0.1",
+    "react-icons": "^5.3.0",
+    "react-input-mask": "^2.0.4",
+    "react-modal": "^3.16.1",
+    "react-multi-carousel": "^2.8.5",
+    "react-responsive-carousel": "^3.2.23",
+    "react-slick": "^0.30.2",
+    "rsuite": "^5.70.1",
+    "sharp": "^0.33.5",
+    "slick-carousel": "^1.8.1",
+    "swiper": "^11.1.12",
+    "tailwindcss-aspect-ratio": "^3.0.0"
+  },
+  "devDependencies": {
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1"
+  }
+}

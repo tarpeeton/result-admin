@@ -1,0 +1,7 @@
+{
+  "name": "Result Agency",
+  "short_name": "Result",
+  "theme_color": "#ffffff",
+  "background_color": "#ffffff",
+  "display": "standalone"
+}

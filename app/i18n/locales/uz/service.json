@@ -1,0 +1,16 @@
+{
+	"service_title":  "Bizning xizmatlarimiz",
+	"card_titleOne": "Veb-sayt ishlab chiqish",
+	"card_titleTwo": "Telegram botlarini ishlab chiqish",
+	"card_titleThree": "SMM",
+	"card_titleFour": "Reklamani ishga tushirish",
+	"card_titleFive": "SEO",
+	"card_titleSix": "Brendlash",
+
+	"card_textOne": "Foydalanish uchun qulay va professional ko'rinishga ega veb-saytlarni ishlab chiqish, biznesning onlaynda ajralib turishiga yordam beradi",
+	"card_textTwo": "Mijozlar bilan muloqotni osonlashtiradigan va muntazam jarayonlarni avtomatlashtiradigan Telegram botlarini yaratish",
+	"card_textThree": "Auditoriyani ko'paytirish va brend imidjini yaxshilash uchun ijtimoiy tarmoqlarni yaratish va boshqarishda yordam berish",
+	"card_textFour": "To'g'ri mijozlarni jalb qiladigan va biznesga ko'proq foyda keltiradigan reklamani o'rnatish",
+	"card_textFive": "Veb-saytingizni optimallashtirish, shunda u qidiruv tizimlarida yuqori o'rinlarni egallaydi va ko'proq tashrif buyuruvchilarni jalb qiladi",
+	"card_textSix": "Mijozlar uchun osongina tanib olinadigan va jozibador bo'ladigan biznes uchun noyob uslub va tasvirni yaratish"
+}
