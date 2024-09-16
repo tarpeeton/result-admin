@@ -12,6 +12,25 @@ export const createReview = async (reviewData) => {
     return response.data;
   } catch (error) {
     console.error("Error creating review:", error);
-    throw error; // Handle error accordingly
+    throw error;
   }
 };
+
+
+
+
+export const createService = async (serviceData) => {
+  try {
+    const response = await axios.post('https://result-me.uz/api/service', serviceData, {
+      headers: {
+        'Content-Type': 'multipart/form-data', // Important for FormData
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error creating service:", error);
+    throw error;
+  }
+};
+
+

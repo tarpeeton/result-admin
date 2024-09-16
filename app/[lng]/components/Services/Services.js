@@ -3,7 +3,7 @@
 import { useCustomTranslation } from '../../../i18n/client'
 import { useParams } from 'next/navigation'
 import { GrLinkNext } from "react-icons/gr";
-
+import { CiCirclePlus } from "react-icons/ci";
 // IMAGE 
 import Image from 'next/image'
 import web from '@/public/images/services/web.svg'
@@ -13,6 +13,8 @@ import Group from '@/public/images/services/Group.svg'
 import seo from '@/public/images/services/seo.svg'
 import branding from '@/public/images/services/branding.svg'
 import Link from 'next/link'
+import { useState } from 'react'
+import { ServiceCreateModal } from '../Create/service.create'
 
 
 const data = [
@@ -77,6 +79,14 @@ const data = [
 const Services = () => {
 	const {lng} = useParams()
 	const {t} = useCustomTranslation(lng , 'services')
+	const [isCreatModalOpen , SetIsCreateModalOpen] = useState(false)
+	const createModalOpen = () => SetIsCreateModalOpen(true)
+	const createModalClose = () => SetIsCreateModalOpen(false)
+
+
+
+
+
 	return (
 	  <div className="w-full flex flex-col flex-wrap justify-between gap-6 mt-[20px] bg-[#F8F8F8] py-[24px] px-[16px] rounded-[30px] mdl:pl-[24px] mdl:pr-[14px]">
 		{/* Card 1 */}
@@ -189,43 +199,14 @@ const Services = () => {
 			</div>
 		  </div>
 		</Link>
+		<button onClick={createModalOpen} className='w-[50%] rounded-[28px] h-[400px] flex items-center justify-center  bg-violet100'>
+			<CiCirclePlus className='text-white100 w-[90px] h-[90px]'/>
+		</button>
 		</div>
 
+		{isCreatModalOpen && <ServiceCreateModal  visible={isCreatModalOpen} isCloseCreateModal={createModalClose}/>}
+
 {/* ===================================END================================= */}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-		
-	
-	
-  
-	
-  
-	
-  
 	
 	  </div>
 	);

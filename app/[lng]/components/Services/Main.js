@@ -3,22 +3,17 @@ import Navigation from './Navigation'
 import Services from './Services'
 import Title from './Title'
 
-
-
-
-
-const ServicesMain= () => {
-  return (
-	<div>
-		<Navigation/>
-		<div className='bg-[#F8F8F8]'>
-		<Title/>
-		<Services/>
-		<FAQAccordion/>
+const ServicesMain = () => {
+	return (
+		<div>
+			<Navigation />
+			<div className='bg-[#F8F8F8]'>
+				<Title />
+				<Services />
+				<FAQAccordion />
 			</div>
-		
-	</div>
-  );
-};
+		</div>
+	)
+}
 
-export default ServicesMain;
+export default ServicesMain

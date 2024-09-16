@@ -1,4 +1,4 @@
-"use client"
+'use client'
 import Image from 'next/image'
 
 import { GrLinkNext, GrLinkPrevious } from 'react-icons/gr'
@@ -11,6 +11,9 @@ import revBottom from '@/public/images/reviews/revBottom.png'
 import revTop from '@/public/images/reviews/revTop.png'
 import { useRef, useState } from 'react'
 import { CreateReviews } from '../Create/review.create'
+import {Button} from 'antd'
+
+
 const SampleNextArrow = ({ onClick }) => (
 	<div
 		className='cursor-pointer text-[20px] w-[60px] h-[60px] rounded-[100px] border border-white100 flex items-center justify-center'
@@ -30,8 +33,7 @@ const SamplePrevArrow = ({ onClick }) => (
 )
 
 const Reviews = () => {
-
-	const [createModal , setCreateModal] = useState(false)
+	const [createModal, setCreateModal] = useState(false)
 	const createReview = () => setCreateModal(true)
 	const isCloseCreateModal = () => setCreateModal(false)
 
@@ -82,7 +84,6 @@ const Reviews = () => {
 			sliderRef.current.slickNext() // Trigger next slide
 		}
 	}
-	
 
 	return (
 		<div
@@ -136,7 +137,15 @@ const Reviews = () => {
 				{/* Add more review slides here */}
 			</Slider>
 			{/* CREATE MODAL */}
-				{createModal && <CreateReviews isCloseCreateModal={isCloseCreateModal}/>}
+			{createModal && (
+				<CreateReviews
+					visible={createModal}
+					isCloseCreateModal={isCloseCreateModal}
+				/>
+			)}
+
+			{/* Call to Action Button */}
+
 			{/* Bottom Decorative Image */}
 			<div className='absolute bottom-0 left-0'>
 				<Image
@@ -150,8 +159,7 @@ const Reviews = () => {
 
 			{/* Call to Action Button */}
 			<div className='text-center mt-6 flex items-center justify-between'>
-			
-				<button
+			<button
 					onClick={createReview}
 					className='w-[80%] 2xl:w-[20%] 2xl:mx-0 mx-auto py-[20px] px-[30px] bg-white text-violet100 font-bold text-[14px]  rounded-full hover:bg-gray-200 transition z-[999]'
 				>
