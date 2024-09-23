@@ -10,7 +10,7 @@ const MainAbout = ({members}) => {
 	<div className='bg-[#F8F8F8]'>
 		<Info/>
 		<MissinResult/>
-		<Team members={members}/>
+		<Team />
 		<Partners/>
 		<Job/>
 		<Contact/>

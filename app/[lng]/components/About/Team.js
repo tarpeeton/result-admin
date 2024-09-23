@@ -1,13 +1,36 @@
 "use client"
 import Image from 'next/image'
 import { FaPlus } from "react-icons/fa6";
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { CreateMember } from '../Create/member.create';
-
-const Team = ({members}) => {
+import { MdDeleteOutline } from "react-icons/md";
+import { CiEdit } from "react-icons/ci";
+import { deleteMember } from '../../lib/api/delete.api';
+import { getAllMembers } from '../../lib/api/get.api';
+import { useParams } from 'next/navigation'
+const Team = () => {
+	const {lng} = useParams()
 	const [create , setCreateModal] = useState(false)
-	const handeCreateModal = () => setCreateModal(!create)
+	const [edit , setEditModal] = useState(false)
+	const [members , setMembers] = useState([])
 
+	const handeCreateModal = () => setCreateModal(!create)
+	const handleEditModal = () => setEditModal(!edit)
+
+
+
+	const handleDeleteMember =  async (id) => {
+		await deleteMember(id)
+	}
+
+	useEffect(() => {
+		const getMembers = async () => {
+			const members = await getAllMembers(lng)
+
+			setMembers(members)
+		}
+		getMembers()
+	} , [lng , members])
 
 	return (
 		<div className=' rounded-[30px] bg-white mdl:rounded-[40px] 3xl:rounded-[100px] mdl:mx-[20px] 3xl:mx-[30px] flex flex-col py-[30px] px-[16px] mdl:py-[50px] mdl:px-[40px] 3xl:p-[70px] mt-[20px] mdl:mt-[25px] 3xl:mt-[30px]'>
@@ -24,7 +47,7 @@ const Team = ({members}) => {
 				{members.map(member => (
 					<div
 						key={member.id}
-						className='flex flex-col min-h-[239px] w-[45%] mb-[20px] mdl:mb-[40px] 3xl:w-[24%] '
+						className='flex flex-col min-h-[239px] w-[45%] mb-[20px] mdl:mb-[40px] 3xl:w-[24%] group '
 					>
 						<div className='rounded-[10px] bg-[#FAFAFA] flex items-center justify-center'>
 							<Image
@@ -44,9 +67,18 @@ const Team = ({members}) => {
 								{member.position}
 							</p>
 						</div>
+						<div className='flex flex-row items-center mt-[20px] justify-between opacity-0 group-hover:opacity-100 transition-opacity duration-300'>
+                            <button onClick={handleEditModal} className='w-[45%] text-blue-600 border border-dashed py-[15px] px-[20px] flex flex-row items-center text-[16px] gap-[5px] justify-center border-blue-600'>
+                                Изменить <CiEdit className='text-blue-600' />
+                            </button>
+                            <button onClick={() => handleDeleteMember(member.id)} className='w-[45%] text-red-600 border border-dashed py-[15px] px-[20px] flex flex-row items-center text-[16px] gap-[5px] border-red-600 justify-center'>
+                                Удалить <MdDeleteOutline className='text-red-600' />
+                            </button>
+                        </div>
 					</div>
 				))}
 				<CreateMember visible={create} isCloseCreateModal={handeCreateModal}/>
+				
 
 				<button onClick={handeCreateModal} className='w-[300px] h-[300px] border border-dashed border-violet100 flex items-center justify-center'>
 					 <FaPlus className='text-[20px] mdl:text-[30px] 3xl:text-[50px] text-violet100'/> 
