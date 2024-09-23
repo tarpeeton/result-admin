@@ -48,7 +48,7 @@ const Header = ({ lng }) => {
 			className={`w-full flex justify-between px-[20px] z-[999] py-[16px] 
             ${isMainPage ? 'bg-violet100' : 'bg-white'}`} // Зависимость от флага isMainPage
 		>
-			<div className='hidden 2xl:flex items-center gap-[25px] 4xl:gap-[40px] xl:w-[30%] 4xl:w-[25%]'>
+			<div className='hidden 2xl:flex items-center gap-[25px] 4xl:gap-[40px] xl:w-[25%] 4xl:w-[25%]'>
 				<Link
 					href='/services'
 					className={`font-montserrat font-semibold text-[16px] leading-[23px] 4xl:text-[18px]  ${
@@ -143,7 +143,7 @@ const Header = ({ lng }) => {
 					alt='Logo'
 				/>
 			</Link>
-			<div className='flex items-center gap-3'>
+			<div className='flex items-center gap-3 xl:w-[25%] xl:justify-end'>
 				<div className='hidden 2xl:flex'>
 					<Link
 						href='tel:+998900228073'

@@ -4,21 +4,23 @@ import { Modal, Input, Button, Upload } from "antd";
 import { FiPlus } from "react-icons/fi";
 import { createService } from "../../lib/api/create.api";
 import toastr from "toastr";
-import "toastr/build/toastr.min.css"; // Toastr CSSni import qilish
+import "toastr/build/toastr.min.css"; // Toastr CSS for notifications
 
 export const ServiceCreateModal = ({ isCloseCreateModal, visible }) => {
+  const [currentLang, setCurrentLang] = useState('ru'); // State for the current selected language
+
   const [serviceData, setServiceData] = useState({
     name: { uz: '', ru: '', en: '' },
     shortDescription: { uz: '', ru: '', en: '' },
     description: { uz: '', ru: '', en: '' },
-    photo: null,  // New field for the photo upload
-    icon: null,   // For the icon upload
+    photo: null,
+    icon: null,
     advantage: [
       {
         name: { uz: '', ru: '', en: '' },
         description: { uz: '', ru: '', en: '' },
-        colorCode: null, // Set colorCode to null when submitting
-        orderNum: 0,
+        colorCode: null,
+        // orderNum: 0,
         active: true
       }
     ],
@@ -26,84 +28,51 @@ export const ServiceCreateModal = ({ isCloseCreateModal, visible }) => {
       {
         name: { uz: '', ru: '', en: '' },
         shortDescription: { uz: '', ru: '', en: '' },
-        option: [{ uz: '', ru: '', en: '' }],  // Multiple options
-        price: '', // Will validate to accept only numbers
-        orderNum: 0,
+        option: [{ uz: '', ru: '', en: '' }],
+        price: '',
+        // orderNum: 0,
         active: true
       }
     ],
-    orderNum: 0,
+    // orderNum: 0,
     active: true,
     main: true,
-    type: [{ id: 1 }]
+    type: [{ id: '3' }]
   });
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const handleChange = (e, field, lang) => {
-    setServiceData((prevData) => ({
-      ...prevData,
-      [field]: { ...prevData[field], [lang]: e.target.value }
-    }));
+  // Handle input changes for the fields based on the current language
+  const handleChange = (e, field) => {
+    setServiceData({
+      ...serviceData,
+      [field]: { ...serviceData[field], [currentLang]: e.target.value }
+    });
   };
 
-  const handleAdvantageChange = (e, index, field, lang = null) => {
-    const newAdvantages = [...serviceData.advantage];
-    if (lang) {
-      newAdvantages[index][field][lang] = e.target.value;
-    } else {
-      newAdvantages[index][field] = e.target.value; // For other fields like description
-    }
-    setServiceData({ ...serviceData, advantage: newAdvantages });
-  };
-
-  const handlePlanChange = (e, index, field, lang = null) => {
+  // Handle plan input changes
+  const handlePlanChange = (e, planIndex, field, lang) => {
     const newPlans = [...serviceData.plan];
-    if (lang) {
-      newPlans[index][field][lang] = e.target.value;
-    } else if (field === 'price') {
-      const numericValue = e.target.value.replace(/\D/g, ''); // Allows only numbers for price
-      newPlans[index][field] = numericValue;
-    } else {
-      newPlans[index][field] = e.target.value;
-    }
+    newPlans[planIndex][field][lang] = e.target.value;
     setServiceData({ ...serviceData, plan: newPlans });
   };
 
+  // Handle option input changes
   const handleOptionChange = (e, planIndex, optionIndex, lang) => {
     const newPlans = [...serviceData.plan];
     newPlans[planIndex].option[optionIndex][lang] = e.target.value;
     setServiceData({ ...serviceData, plan: newPlans });
   };
 
+  // Add new option to a specific plan
   const handleAddOption = (planIndex) => {
     const newPlans = [...serviceData.plan];
-    newPlans[planIndex].option.push({ uz: '', ru: '', en: '' });  // Adding a new empty option
+    newPlans[planIndex].option.push({ uz: '', ru: '', en: '' });
     setServiceData({ ...serviceData, plan: newPlans });
   };
 
-  const handleFileUpload = ({ file }, field) => {
-    setServiceData((prevData) => ({
-      ...prevData,
-      [field]: file // Either 'photo' or 'icon'
-    }));
-  };
-
-  const handleAddAdvantage = () => {
-    const newAdvantage = {
-      name: { uz: '', ru: '', en: '' },
-      description: { uz: '', ru: '', en: '' },
-      colorCode: null,
-      orderNum: 0,
-      active: true
-    };
-    setServiceData(prevData => ({
-      ...prevData,
-      advantage: [...prevData.advantage, newAdvantage]
-    }));
-  };
-
+  // Handle adding plans
   const handleAddPlan = () => {
     const newPlan = {
       name: { uz: '', ru: '', en: '' },
@@ -119,22 +88,17 @@ export const ServiceCreateModal = ({ isCloseCreateModal, visible }) => {
     }));
   };
 
+  // Handle submit form
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
+
     setLoading(true);
 
-    // Set colorCode to null for all advantages before submission
-    const updatedAdvantages = serviceData.advantage.map(advantage => ({
-      ...advantage,
-      colorCode: null  // Set to null
-    }));
-
-    const formData = new FormData();
     const jsonData = {
       name: serviceData.name,
       shortDescription: serviceData.shortDescription,
       description: serviceData.description,
-      advantage: updatedAdvantages, // Updated advantages with colorCode null
+      advantage: serviceData.advantage,
       plan: serviceData.plan,
       orderNum: serviceData.orderNum,
       active: serviceData.active,
@@ -142,12 +106,15 @@ export const ServiceCreateModal = ({ isCloseCreateModal, visible }) => {
       type: serviceData.type
     };
 
+    const formData = new FormData();
     formData.append('json', JSON.stringify(jsonData));
+
+    // Append files separately
     if (serviceData.photo) {
-      formData.append('photo', serviceData.photo); // Attach photo
+      formData.append('photo', serviceData.photo);
     }
     if (serviceData.icon) {
-      formData.append('icon', serviceData.icon); // Attach icon
+      formData.append('icon', serviceData.icon);
     }
 
     try {
@@ -160,167 +127,126 @@ export const ServiceCreateModal = ({ isCloseCreateModal, visible }) => {
       setLoading(false);
     }
   };
+  const handleFileUpload = ({ file }, field) => {
+    setServiceData((prevData) => ({
+      ...prevData,
+      [field]: file // Either 'photo' or 'icon'
+    }));
+  };
+
+  // Language switcher handler
+  const handleLangSwitch = (lang) => {
+    setCurrentLang(lang); // Update the current language selection
+  };
 
   return (
     <Modal
-      title="Создать Сервис"
+      title={<span className="text-[18px] font-bold">Создать Сервис</span>}
       visible={visible}
       onCancel={isCloseCreateModal}
       footer={null}
       width={800}
     >
-      <form onSubmit={handleSubmit}>
+      <form>
+        {/* Custom Language Switcher */}
+        <div className='flex gap-2 mb-4'>
+          <button
+            type="button"
+            className={`px-4 py-2 rounded-lg ${currentLang === 'ru' ? 'bg-violet100 text-white' : 'bg-gray-200'}`}
+            onClick={() => handleLangSwitch('ru')}
+          >
+            RU
+          </button>
+          <button
+            type="button"
+            className={`px-4 py-2 rounded-lg ${currentLang === 'uz' ? 'bg-violet100 text-white' : 'bg-gray-200'}`}
+            onClick={() => handleLangSwitch('uz')}
+          >
+            UZ
+          </button>
+          <button
+            type="button"
+            className={`px-4 py-2 rounded-lg ${currentLang === 'en' ? 'bg-violet100 text-white' : 'bg-gray-200'}`}
+            onClick={() => handleLangSwitch('en')}
+          >
+            EN
+          </button>
+        </div>
+
         {/* Name Fields */}
         <div className="flex flex-col gap-[10px]">
-          <label>Название (UZ)</label>
+          <label>Название ({currentLang.toUpperCase()})</label>
           <Input
-            value={serviceData.name.uz}
-            onChange={(e) => handleChange(e, 'name', 'uz')}
-            required
-          />
-          <label>Название (RU)</label>
-          <Input
-            value={serviceData.name.ru}
-            onChange={(e) => handleChange(e, 'name', 'ru')}
-            required
-          />
-          <label>Название (EN)</label>
-          <Input
-            value={serviceData.name.en}
-            onChange={(e) => handleChange(e, 'name', 'en')}
+            value={serviceData.name[currentLang]}
+            onChange={(e) => handleChange(e, 'name')}
             required
           />
         </div>
 
         {/* Short Description Fields */}
         <div className="flex flex-col gap-[10px] mt-4">
-          <label>Краткое Описание (UZ)</label>
+          <label>Краткое Описание ({currentLang.toUpperCase()})</label>
           <Input
-            value={serviceData.shortDescription.uz}
-            onChange={(e) => handleChange(e, 'shortDescription', 'uz')}
-            required
-          />
-          <label>Краткое Описание (RU)</label>
-          <Input
-            value={serviceData.shortDescription.ru}
-            onChange={(e) => handleChange(e, 'shortDescription', 'ru')}
-            required
-          />
-          <label>Краткое Описание (EN)</label>
-          <Input
-            value={serviceData.shortDescription.en}
-            onChange={(e) => handleChange(e, 'shortDescription', 'en')}
+            value={serviceData.shortDescription[currentLang]}
+            onChange={(e) => handleChange(e, 'shortDescription')}
             required
           />
         </div>
 
         {/* Description Fields */}
         <div className="flex flex-col gap-[10px] mt-4">
-          <label>Описание (UZ)</label>
+          <label>Описание ({currentLang.toUpperCase()})</label>
           <Input.TextArea
-            value={serviceData.description.uz}
-            onChange={(e) => handleChange(e, 'description', 'uz')}
+            value={serviceData.description[currentLang]}
+            onChange={(e) => handleChange(e, 'description')}
             required
           />
-          <label>Описание (RU)</label>
-          <Input.TextArea
-            value={serviceData.description.ru}
-            onChange={(e) => handleChange(e, 'description', 'ru')}
-            required
-          />
-          <label>Описание (EN)</label>
-          <Input.TextArea
-            value={serviceData.description.en}
-            onChange={(e) => handleChange(e, 'description', 'en')}
-            required
-          />
-        </div>
-
-        {/* Advantage Section */}
-        <div className="mt-4">
-          <h3>Преимущества</h3>
-          {serviceData.advantage.map((advantage, index) => (
-            <div key={index} className="flex flex-col gap-[10px] mt-4">
-              <label>Название (UZ)</label>
-              <Input
-                value={advantage.name.uz}
-                onChange={(e) => handleAdvantageChange(e, index, 'name', 'uz')}
-                required
-              />
-              <label>Описание (RU)</label>
-              <Input
-                value={advantage.description.ru}
-                onChange={(e) => handleAdvantageChange(e, index, 'description', 'ru')}
-                required
-              />
-              <label>Описание (EN)</label>
-              <Input
-                value={advantage.description.en}
-                onChange={(e) => handleAdvantageChange(e, index, 'description', 'en')}
-                required
-              />
-            </div>
-          ))}
-          <Button onClick={handleAddAdvantage} className="mt-2">
-            Добавить Преимущество
-          </Button>
         </div>
 
         {/* Plan Section */}
         <div className="mt-4">
-          <h3>Планы</h3>
+          <h3 className="font-bold text-[18px]">Планы</h3>
           {serviceData.plan.map((plan, planIndex) => (
             <div key={planIndex} className="flex flex-col gap-[10px] mt-4">
-              <label>Название (UZ)</label>
+              <label>Название ({currentLang.toUpperCase()})</label>
               <Input
-                value={plan.name.uz}
-                onChange={(e) => handlePlanChange(e, planIndex, 'name', 'uz')}
+                value={plan.name[currentLang]}
+                onChange={(e) => handlePlanChange(e, planIndex, 'name', currentLang)}
                 required
               />
-              <label>Описание (RU)</label>
+              <label>Краткое Описание ({currentLang.toUpperCase()})</label>
               <Input
-                value={plan.shortDescription.ru}
-                onChange={(e) => handlePlanChange(e, planIndex, 'shortDescription', 'ru')}
-                required
-              />
-              <label>Описание (EN)</label>
-              <Input
-                value={plan.shortDescription.en}
-                onChange={(e) => handlePlanChange(e, planIndex, 'shortDescription', 'en')}
+                value={plan.shortDescription[currentLang]}
+                onChange={(e) => handlePlanChange(e, planIndex, 'shortDescription', currentLang)}
                 required
               />
               <label>Цена</label>
               <Input
                 value={plan.price}
-                onChange={(e) => handlePlanChange(e, planIndex, 'price')}
+                onChange={(e) => {
+                  const newPlans = [...serviceData.plan];
+                  newPlans[planIndex].price = e.target.value.replace(/\D/g, ''); // Only allow numbers
+                  setServiceData({ ...serviceData, plan: newPlans });
+                }}
                 required
               />
 
               {/* Option Section */}
-              <h4>Опции</h4>
+              <h4 className='font-bold text-[18px]'>Опции</h4>
               {plan.option.map((option, optionIndex) => (
                 <div key={optionIndex} className="flex flex-col gap-[10px] mt-2">
-                  <label>Опция (UZ)</label>
-                  <Input
-                    value={option.uz}
-                    onChange={(e) => handleOptionChange(e, planIndex, optionIndex, 'uz')}
-                    required
-                  />
-                  <label>Опция (RU)</label>
-                  <Input
-                    value={option.ru}
-                    onChange={(e) => handleOptionChange(e, planIndex, optionIndex, 'ru')}
-                    required
-                  />
-                  <label>Опция (EN)</label>
-                  <Input
-                    value={option.en}
-                    onChange={(e) => handleOptionChange(e, planIndex, optionIndex, 'en')}
-                    required
-                  />
+                  {['uz', 'ru', 'en'].map(lang => (
+                    <div key={lang}>
+                      <label>Опция ({lang.toUpperCase()})</label>
+                      <Input
+                        value={option[lang]}
+                        onChange={(e) => handleOptionChange(e, planIndex, optionIndex, lang)}
+                        required
+                      />
+                    </div>
+                  ))}
                 </div>
               ))}
-
               <Button onClick={() => handleAddOption(planIndex)} className="mt-2">
                 Добавить Опцию
               </Button>
@@ -332,40 +258,38 @@ export const ServiceCreateModal = ({ isCloseCreateModal, visible }) => {
         </div>
 
         {/* File Upload Section */}
-        <div className='flex flex-row gap-[10px]'>
-          {/* File Upload for Photo */}
-          <div className="flex flex-col gap-[10px] mt-4">
-            <label>Фото</label>
+        <div className="flex flex-row gap-[10px] mt-4">
+          <div className="flex flex-col gap-[10px]">
+            <label className="font-bold text-[18px]">Фото</label>
             <Upload
               name="photo"
               listType="picture-card"
               showUploadList={false}
-              beforeUpload={() => false} // Prevent automatic upload
-              onChange={(info) => handleFileUpload(info, 'photo')} // Handle photo upload
+              beforeUpload={() => false}
+              onChange={(info) => handleFileUpload(info, 'photo')}
             >
               {serviceData.photo ? (
                 <img src={URL.createObjectURL(serviceData.photo)} alt="photo" style={{ width: '100%' }} />
               ) : (
-                <div className="w-[40px] h-[40px] flex items-center justify-center ">
+                <div className="w-[40px] h-[40px] flex items-center justify-center">
                   <FiPlus className="text-violet100 w-full h-full" />
                 </div>
               )}
             </Upload>
           </div>
-          {/* File Upload for Icon */}
-          <div className="flex flex-col gap-[10px] mt-4">
-            <label>Иконка</label>
+          <div className="flex flex-col gap-[10px]">
+            <label className="font-bold text-[18px]">Иконка</label>
             <Upload
               name="icon"
               listType="picture-card"
               showUploadList={false}
-              beforeUpload={() => false} // Prevent automatic upload
-              onChange={(info) => handleFileUpload(info, 'icon')} // Handle icon upload
+              beforeUpload={() => false}
+              onChange={(info) => handleFileUpload(info, 'icon')}
             >
               {serviceData.icon ? (
                 <img src={URL.createObjectURL(serviceData.icon)} alt="icon" style={{ width: '100%' }} />
               ) : (
-                <div className="w-[40px] h-[40px] flex items-center justify-center ">
+                <div className="w-[40px] h-[40px] flex items-center justify-center">
                   <FiPlus className="text-violet100 w-full h-full" />
                 </div>
               )}
@@ -381,7 +305,8 @@ export const ServiceCreateModal = ({ isCloseCreateModal, visible }) => {
           <Button
             htmlType="submit"
             loading={loading}
-            className="w-[30%] mt-[12px] py-[10px] px-[20px] rounded-full bg-violet100 text-white font-bold"
+            onClick={handleSubmit}
+            className="w-[30%] mt-[12px] py-[30px] px-[24px] rounded-full bg-violet100 text-white font-bold"
           >
             {loading ? 'Сохраняется..' : 'Сохранить'}
           </Button>

@@ -5,12 +5,12 @@ import Partners from '../Main/Partners';
 import Job from './Job'
 import Contact from './Contact'
 
-const MainAbout = () => {
+const MainAbout = ({members}) => {
   return (
 	<div className='bg-[#F8F8F8]'>
 		<Info/>
 		<MissinResult/>
-		<Team/>
+		<Team members={members}/>
 		<Partners/>
 		<Job/>
 		<Contact/>

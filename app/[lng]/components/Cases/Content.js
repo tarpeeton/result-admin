@@ -11,9 +11,9 @@ import mrj from '@/public/images/cases/mrj.jpg';
 import inst from '@/public/images/cases/inst.jpg';
 import dr from '@/public/images/cases/dr.jpg';
 import inter from '@/public/images/cases/inter.png';
-
+import { FaPlus } from "react-icons/fa6";
 import caseDesckription from '@/public/images/Vector.png';
- 
+ import { CaseCreateModal } from '../Create/case.create';
 
 // Items for filtering
 const items = [
@@ -99,6 +99,10 @@ const data = [
 const Content = () => {
   const [selected, setSelected] = useState(1);
   const [filteredData, setFilteredData] = useState(data); // State for filtered data
+  const [modal , setModal] = useState(false)
+  const openCreateModal = () => setModal(true)
+  const closeCreateModal = () => setModal(false)
+
   const mobileSpansRef = useRef([]);
   const desktopSpansRef = useRef([]);
 
@@ -195,8 +199,12 @@ const Content = () => {
         ))}
       </div>
 
+        {/* CREATE MODAL */}
+        <CaseCreateModal isCloseCreateModal={closeCreateModal} visible={modal}/> 
+
       {/* Cards Section (Filtered Data) */}
       <div className="mx-[16px] 3xl:flex 3xl:flex-row 3xl:flex-wrap 3xl:gap-[100px] 3xl:mx-[30px]">
+       
         {filteredData.map((item, idx) => (
           <Link
             href={`/cases/${item.id}`}
@@ -254,7 +262,15 @@ const Content = () => {
               </p>
             </div>
           </Link>
+
+          
         ))}
+        <button
+        onClick={openCreateModal}
+            className="w-full mt-[20px] 3xl:w-[45%] 6xl:max-w-[99%] relative group cursor-pointer flex items-center justify-center rounded-[6px] border border-violet100 border-dashed"
+          >
+           <FaPlus className='text-[20px] mdl:text-[40px] 3xl:text-[50px] text-violet100'/> 
+          </button>
       </div>
     </div>
   );

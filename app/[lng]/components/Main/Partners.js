@@ -1,10 +1,11 @@
 'use client'
+import {CreatePartner} from "@/app/[lng]/components/Create/partner.create";
 import { GrLinkPrevious } from 'react-icons/gr'
 import { GrLinkNext } from 'react-icons/gr'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 import Slider from 'react-slick'
-import { useRef } from 'react'
+import { useRef , useState } from 'react'
 import Image from 'next/image'
 
 import One from '@/public/images/partners/1.png'
@@ -19,6 +20,10 @@ import Nine from '@/public/images/partners/9.png'
 import Ten from '@/public/images/partners/10.png'
 import Eleven from '@/public/images/partners/11.png'
 import Tvelwe from '@/public/images/partners/12.png'
+import { GoPlus } from "react-icons/go";
+
+
+
 
 const SampleNextArrow = ({ onClick }) => (
 	<div className='cursor-pointer text-[20px]' onClick={onClick}>
@@ -34,7 +39,9 @@ const SamplePrevArrow = ({ onClick }) => (
 
 const Partners = () => {
 	const sliderRef = useRef(null)
+	const [createModal , setCreateModal] = useState(false)
 
+	const toggleSetCreateModal = () => setCreateModal(!createModal)
 	const settings = {
 		dots: false,
 		infinite: false,
@@ -315,7 +322,16 @@ const Partners = () => {
 								alt='partners Logo'
 							/>
 							</div>
+
+				 <CreatePartner isCloseCreateModal={toggleSetCreateModal} visible={createModal}/>
+
 							
+						</div>
+				<div className='cursor-pointer border border-dashed border-violet100 rounded-[20px] bg-white100 py-[36px] px-[66px] mb-[20px]   2xl:w-[24%] mdl:min-h-[250px] mdl:flex mdl:items-center '>
+							<button onClick={toggleSetCreateModal} className=' w-full h-full flex items-center justify-center' >
+								<GoPlus className='text-[50px] text-violet100'/>
+							</button>
+
 						</div>
 			</div>
 		</div>

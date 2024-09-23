@@ -1,9 +1,15 @@
 import Main from "@/app/[lng]/components/About/Main";
+import { getAllMembers } from '../lib/api/get.api';
 
-export default function Home() {
+
+
+export default async function Home({ params }) {
+  const {lng} = params
+  const members = await getAllMembers(lng);
   return (
     <div>
-      <Main/>
+      {/* Pass the fetched data (members) and lng to the Main component */}
+      <Main members={members}  />
     </div>
   );
 }

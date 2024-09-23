@@ -709,7 +709,6 @@ const data = [
 
 const MainBlogItem = () => {
   const { slug } = useParams();
-	console.log(data)
   // Find the blog post by matching slug
   const blog = data.find(item => item.slug === slug);
 

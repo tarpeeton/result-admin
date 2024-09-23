@@ -29,7 +29,6 @@ const Job = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     // Perform necessary actions like API calls here
-    console.log('Form Data Submitted:', formData);
 
     // Reset form after submission
     setFormData({

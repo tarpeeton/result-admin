@@ -21,7 +21,7 @@ const CaseTitle = () => {
 					</p>
 				</div>
 				<button
-					onClick={openModal}
+					
 					className='w-full py-[20px] px-[30px] bg-violet100  text-center  rounded-[100px] font-bold text-[14px] 3xl:w-[30%] text-white100 mt-[25px] mdl:mt-[40px]'
 				>
 					Хочу крутой проект!
