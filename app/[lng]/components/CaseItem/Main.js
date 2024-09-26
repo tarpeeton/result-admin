@@ -20,7 +20,7 @@ const CaseItemMain = ({ data }) => {
 	return (
 		<div className='px-[16px] bg-[#F8F8F8]'>
 			<Banner data={banner}   ID={data.id}/> 
-		 <Question queryData={query} description={queryDescription} />
+		 	<Question queryData={query} description={queryDescription} ID={data.id} />
 			<ServicesProvided result={providedService} />
 			<Result
 				resultDescription={resultDescription}

@@ -1,9 +1,13 @@
 "use client";
 import { useState } from "react";
+import { EditQuestion } from '../Edit/caseQuation.update';
 
-const Question = ({ queryData, description }) => {
+const Question = ({ queryData, description , ID }) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [open , setOpen] = useState(false)
 
+
+  const editModalOpen = () => setOpen(!open)
   // Toggle function for expanding or collapsing the description
   const toggleShowMore = () => {
     setIsExpanded((prev) => !prev);
@@ -18,8 +22,14 @@ const Question = ({ queryData, description }) => {
         <p className="text-titleDark text-[28px] mdl:text-[40px] 3xl:text-[50px] font-bold">
           Запросы
         </p>
+        <button
+						onClick={editModalOpen}
+						className='mt-[20px] w-[50%] bg-violet100 rounded-full py-[25px] px-[15px] text-white100 text-center text-[18px] font-bold'
+					>
+						Редактировать
+					</button>
       </div>
-
+    <EditQuestion isCloseCreateModal={editModalOpen} queryData={queryData} visible={open} questionID={ID} description={description}/>
       <div className="3xl:w-[60%]">
         {/* List of titles */}
         <ul className="flex flex-col mt-[20px] ml-[24px] 3xl:w-[60%]">
