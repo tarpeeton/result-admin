@@ -14,10 +14,10 @@ export const CaseCreateModal = ({ isCloseCreateModal, visible }) => {
   const [serviceData, setServiceData] = useState({
     banner: {
       title: { uz: "", ru: "", en: "" },
-      link: "",
       shortDescription: { uz: "", ru: "", en: "" },
     },
-    query: [{ uz: "", ru: "", en: "" }], // Array for dynamic query inputs
+    query: [{ uz: "", ru: "", en: "" }],
+    queryDescription: { uz: "", ru: "", en: "" },
     providedService: [
       {
         name: { uz: "", ru: "", en: "" },
@@ -33,10 +33,13 @@ export const CaseCreateModal = ({ isCloseCreateModal, visible }) => {
         orderNum: 0,
       },
     ],
+    resultDescription: { uz: "", ru: "", en: "" },
     type: [{ id: 1 }], // Initial type with id 1
     bannerBackground: null,
     bannerPhoto: null,
-    bannerLogo: null,
+    resultSiteLink: '', // Single language field
+    resultInstagramLink: '', // Single language field
+    resultTelegramLink: '', // Single language field
     slider: [],
     orderNum: 1,
     active: true,
@@ -189,16 +192,20 @@ export const CaseCreateModal = ({ isCloseCreateModal, visible }) => {
     const jsonData = {
       banner: {
         title: serviceData.banner.title,
-        link: serviceData.banner.link,
         shortDescription: serviceData.banner.shortDescription,
       },
       query: serviceData.query,
+      queryDescription: serviceData.queryDescription,
       providedService: serviceData.providedService,
       obtainedResult: serviceData.obtainedResult,
+      resultDescription: serviceData.resultDescription,
       orderNum: serviceData.orderNum,
       active: serviceData.active,
       main: serviceData.main,
       type: serviceData.type,
+      resultSiteLink: serviceData.resultSiteLink,
+      resultInstagramLink: serviceData.resultInstagramLink,
+      resultTelegramLink: serviceData.resultTelegramLink,
     };
 
     const formData = new FormData();
@@ -207,9 +214,6 @@ export const CaseCreateModal = ({ isCloseCreateModal, visible }) => {
     // Append files if available
     if (serviceData.bannerPhoto) {
       formData.append("banner-photo", serviceData.bannerPhoto);
-    }
-    if (serviceData.bannerLogo) {
-      formData.append("banner-logo", serviceData.bannerLogo);
     }
     if (serviceData.bannerBackground) {
       formData.append("banner-background", serviceData.bannerBackground);
@@ -263,13 +267,6 @@ export const CaseCreateModal = ({ isCloseCreateModal, visible }) => {
             required
           />
 
-          <label>Ссылка баннера</label>
-          <Input
-            value={serviceData.banner.link}
-            onChange={(e) => handleBannerChange(e, "link")}
-            required
-          />
-
           <label>Краткое описание ({currentLang.toUpperCase()})</label>
           <Input
             value={serviceData.banner.shortDescription[currentLang]}
@@ -297,6 +294,23 @@ export const CaseCreateModal = ({ isCloseCreateModal, visible }) => {
           <Button onClick={handleAddQuery} className="mt-2">
             Добавить Запрос
           </Button>
+        </div>
+
+        <div className="mt-4">
+          <label>Описание Запроса ({currentLang.toUpperCase()})</label>
+          <Input.TextArea
+            value={serviceData.queryDescription[currentLang]}
+            onChange={(e) =>
+              setServiceData((prevState) => ({
+                ...prevState,
+                queryDescription: {
+                  ...prevState.queryDescription,
+                  [currentLang]: e.target.value,
+                },
+              }))
+            }
+            required
+          />
         </div>
 
         {/* Provided Services Section */}
@@ -347,6 +361,23 @@ export const CaseCreateModal = ({ isCloseCreateModal, visible }) => {
           </Button>
         </div>
 
+        <div className="mt-4">
+          <label>Описание Результата ({currentLang.toUpperCase()})</label>
+          <Input.TextArea
+            value={serviceData.resultDescription[currentLang]}
+            onChange={(e) =>
+              setServiceData((prevState) => ({
+                ...prevState,
+                resultDescription: {
+                  ...prevState.resultDescription,
+                  [currentLang]: e.target.value,
+                },
+              }))
+            }
+            required
+          />
+        </div>
+
         {/* Type Section */}
         <div className="mt-4">
           <h3 className="font-bold text-[18px]">Типы</h3>
@@ -391,40 +422,14 @@ export const CaseCreateModal = ({ isCloseCreateModal, visible }) => {
             </Upload>
             {serviceData.bannerPhoto && (
               <MdDeleteForever
-               className="absolute top-[50px] right-[20px] text-red-600 cursor-pointer"
+                className="absolute top-[50px] right-[20px] text-red-600 cursor-pointer"
                 size={24}
                 onClick={() => handleFileRemove("bannerPhoto")}
               />
             )}
           </div>
 
-          {/* Banner Logo Upload */}
-          <div className="flex flex-col gap-[10px] relative">
-            <label className="font-bold text-[18px]">Логотип баннера</label>
-            <Upload
-              name="banner-logo"
-              listType="picture-card"
-              showUploadList={false}
-              beforeUpload={() => false}
-              onChange={(info) => handleFileUpload(info, "bannerLogo")}
-              onRemove={() => handleFileRemove("bannerLogo")} // Add file removal functionality
-            >
-              {serviceData.bannerLogo ? (
-                <img src={URL.createObjectURL(serviceData.bannerLogo)} alt="bannerLogo" style={{ width: "100%" }} />
-              ) : (
-                <div className="w-[40px] h-[40px] flex items-center justify-center">
-                  <FiPlus className="text-violet100 w-full h-full" />
-                </div>
-              )}
-            </Upload>
-            {serviceData.bannerLogo && (
-              <MdDeleteForever
-                className="absolute top-[50px] right-[50px] text-red-600 cursor-pointer"
-                size={24}
-                onClick={() => handleFileRemove("bannerLogo")}
-              />
-            )}
-          </div>
+         
 
           {/* Banner Background Upload */}
           <div className="flex flex-col gap-[10px] relative">
@@ -470,6 +475,34 @@ export const CaseCreateModal = ({ isCloseCreateModal, visible }) => {
               <FiPlus className="text-violet100 w-full h-full" />
             </div>
           </Upload>
+        </div>
+
+        {/* New fields for site, Instagram, and Telegram links */}
+        <div className="mt-4">
+          <label>Ссылка на сайт</label>
+          <Input
+            value={serviceData.resultSiteLink}
+            onChange={(e) => setServiceData((prevState) => ({ ...prevState, resultSiteLink: e.target.value }))}
+            required
+          />
+        </div>
+
+        <div className="mt-4">
+          <label>Ссылка на Instagram</label>
+          <Input
+            value={serviceData.resultInstagramLink}
+            onChange={(e) => setServiceData((prevState) => ({ ...prevState, resultInstagramLink: e.target.value }))}
+            required
+          />
+        </div>
+
+        <div className="mt-4">
+          <label>Ссылка на Telegram</label>
+          <Input
+            value={serviceData.resultTelegramLink}
+            onChange={(e) => setServiceData((prevState) => ({ ...prevState, resultTelegramLink: e.target.value }))}
+            required
+          />
         </div>
 
         {/* Error Handling */}
