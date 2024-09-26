@@ -33,6 +33,7 @@ export const CaseCreateModal = ({ isCloseCreateModal, visible }) => {
         orderNum: 0,
       },
     ],
+    type: [{ id: 1 }], // Initial type with id 1
     bannerBackground: null,
     bannerPhoto: null,
     bannerLogo: null,
@@ -40,7 +41,6 @@ export const CaseCreateModal = ({ isCloseCreateModal, visible }) => {
     orderNum: 1,
     active: true,
     main: true,
-    type: [{ id: 3 }],
   });
 
   const [loading, setLoading] = useState(false);
@@ -123,6 +123,27 @@ export const CaseCreateModal = ({ isCloseCreateModal, visible }) => {
         { name: { uz: "", ru: "", en: "" }, result: { uz: "", ru: "", en: "" }, orderNum: 0 },
       ],
     }));
+  };
+
+  // Handle dynamic type input changes
+  const handleTypeChange = (e, index) => {
+    const updatedTypes = [...serviceData.type];
+    updatedTypes[index].id = e.target.value;
+    setServiceData({ ...serviceData, type: updatedTypes });
+  };
+
+  // Add a new type block
+  const handleAddType = () => {
+    setServiceData((prevData) => ({
+      ...prevData,
+      type: [...prevData.type, { id: "" }],
+    }));
+  };
+
+  // Remove a type block
+  const handleRemoveType = (index) => {
+    const updatedTypes = serviceData.type.filter((_, i) => i !== index);
+    setServiceData({ ...serviceData, type: updatedTypes });
   };
 
   // Handle file uploads for single files
@@ -212,7 +233,7 @@ export const CaseCreateModal = ({ isCloseCreateModal, visible }) => {
 
   return (
     <Modal
-      title={<span className="text-[18px] font-bold">Создать Сервис</span>}
+      title={<span className="text-[18px] font-bold">Создать CASE</span>}
       visible={visible}
       onCancel={isCloseCreateModal}
       footer={null}
@@ -326,6 +347,27 @@ export const CaseCreateModal = ({ isCloseCreateModal, visible }) => {
           </Button>
         </div>
 
+        {/* Type Section */}
+        <div className="mt-4">
+          <h3 className="font-bold text-[18px]">Типы</h3>
+          {serviceData.type.map((type, index) => (
+            <div key={index} className="flex items-center gap-[10px] mt-4">
+              <Input
+                placeholder="Введите ID типа"
+                value={type.id}
+                onChange={(e) => handleTypeChange(e, index)}
+                required
+              />
+              <Button type="danger" onClick={() => handleRemoveType(index)}>
+                Удалить Тип
+              </Button>
+            </div>
+          ))}
+          <Button onClick={handleAddType} className="mt-2">
+            Добавить Тип
+          </Button>
+        </div>
+
         {/* File Upload Section */}
         <div className="flex flex-row gap-[10px] mt-4">
           {/* Banner Photo Upload */}
@@ -349,7 +391,7 @@ export const CaseCreateModal = ({ isCloseCreateModal, visible }) => {
             </Upload>
             {serviceData.bannerPhoto && (
               <MdDeleteForever
-                className="absolute top-1 right-1 text-violet100 cursor-pointer"
+               className="absolute top-[50px] right-[20px] text-red-600 cursor-pointer"
                 size={24}
                 onClick={() => handleFileRemove("bannerPhoto")}
               />
@@ -377,7 +419,7 @@ export const CaseCreateModal = ({ isCloseCreateModal, visible }) => {
             </Upload>
             {serviceData.bannerLogo && (
               <MdDeleteForever
-                className="absolute top-1 right-1 text-violet100 cursor-pointer"
+                className="absolute top-[50px] right-[50px] text-red-600 cursor-pointer"
                 size={24}
                 onClick={() => handleFileRemove("bannerLogo")}
               />
@@ -405,7 +447,7 @@ export const CaseCreateModal = ({ isCloseCreateModal, visible }) => {
             </Upload>
             {serviceData.bannerBackground && (
               <MdDeleteForever
-                className="absolute top-1 right-1 text-violet100 cursor-pointer"
+                className="absolute top-[50px] right-[20px] text-red-600 cursor-pointer"
                 size={24}
                 onClick={() => handleFileRemove("bannerBackground")}
               />
@@ -428,20 +470,6 @@ export const CaseCreateModal = ({ isCloseCreateModal, visible }) => {
               <FiPlus className="text-violet100 w-full h-full" />
             </div>
           </Upload>
-          {serviceData.slider.map((file, index) => (
-            <div key={index} className="relative inline-block">
-              <img
-                src={URL.createObjectURL(file.originFileObj)}
-                alt={`slider_${index}`}
-                style={{ width: "100px", height: "100px" }}
-              />
-              <MdDeleteForever
-                className="absolute top-1 right-1 text-violet100 cursor-pointer"
-                size={24}
-                onClick={() => handleSliderRemove(file)}
-              />
-            </div>
-          ))}
         </div>
 
         {/* Error Handling */}
@@ -462,6 +490,3 @@ export const CaseCreateModal = ({ isCloseCreateModal, visible }) => {
     </Modal>
   );
 };
-
-
-

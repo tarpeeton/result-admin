@@ -56,7 +56,8 @@ export const createCase = async serviceData => {
 export const createPartner = async formData => {
 	try {
 		const response = await axios.post(
-			'http://213.230.91.55:8190/api/partner/create',
+			// 'http://213.230.91.55:8190/api/partner/create',
+			'http://13.61.1.182:8190/api/partner/create',
 			formData,
 			{
 				headers: {
@@ -90,7 +91,7 @@ export const createProject = async formData => {
 export const createMembers = async formData => {
 	try {
 		const response = await axios.post(
-			'http://213.230.91.55:8190/api/team',
+			'http://13.61.1.182:8190/api/team',
 			formData,
 			{
 				headers: {

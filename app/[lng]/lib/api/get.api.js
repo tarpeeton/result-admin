@@ -17,7 +17,6 @@ export const getReviewsAll = async lng => {
 	}
 }
 
-
 // GET REVIEW WITH ID
 
 // GET MAIN BANNER
@@ -59,7 +58,7 @@ export const getMainBanner = async lng => {
 
 export const getAllMembers = async lng => {
 	try {
-		const res = await axios.get('http://213.230.91.55:8190/api/team/all', {
+		const res = await axios.get('http://13.61.1.182:8190/api/team/all', {
 			// Set the Accept-Language header to the language of the reviews
 			headers: {
 				'Accept-Language': lng,
@@ -72,3 +71,57 @@ export const getAllMembers = async lng => {
 		console.log(error.message)
 	}
 }
+export const getSingleMember = async (memberID) => {
+	try {
+		const res = await axios.get(
+			`http://13.61.1.182:8190/api/team/${memberID}`, 
+			{
+				headers: {
+					'Accept-Language': null // Set the supported language
+				}
+			}
+		);
+		return res.data.data;
+	} catch (error) {
+		// Log the error message
+		console.log(error.message);
+		return null;
+	}
+};
+export const getSingleCase = async (ID , lng) => {
+	
+	try {
+		const res = await axios.get(
+			`http://213.230.91.55:8190/api/case/${ID}`, 
+			{
+				headers: {
+					'Accept-Language': lng // Set the supported language
+				}
+			}
+		);
+		return res.data.data;
+	} catch (error) {
+		// Log the error message
+		console.log(error.message);
+		return null;
+	}
+};
+export const getAllCases = async (lng, typeID) => {
+	try {
+	  const res = await axios.get(
+		`http://213.230.91.55:8190/api/case/all`,
+		{
+		  headers: {
+			"Accept-Language": lng, // Set the supported language
+		  },
+		  params: typeID ? { "type-id": typeID } : {}, // Only pass typeID if it's not null
+		}
+	  );
+	  return res.data.data;
+	} catch (error) {
+	  // Log the error message
+	  console.log(error.message);
+	  return null;
+	}
+  };
+  

@@ -1,111 +1,129 @@
 'use client'
 import { useState } from 'react'
-import { Modal, Input, Button, Upload } from 'antd'
+import { Modal, Input, Button, Upload, Image } from 'antd'
 import { createPartner } from '../../lib/api/create.api' // Modify createPartner API function as needed
 import { UploadOutlined } from '@ant-design/icons'
 import toastr from 'toastr'
 import 'toastr/build/toastr.min.css' // Import Toastr CSS
 import { MdDelete } from 'react-icons/md'
 
+// Helper function to get base64 from file
+const getBase64 = (file) => 
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (error) => reject(error);
+  });
+
 export const CreatePartner = ({ isCloseCreateModal, visible }) => {
-	const [partnerName, setPartnerName] = useState('')
-	const [fileList, setFileList] = useState([])
+  const [partnerName, setPartnerName] = useState('')
+  const [fileList, setFileList] = useState([]) // Array to hold the file objects
+  const [previewOpen, setPreviewOpen] = useState(false) // Controls preview modal visibility
+  const [previewImage, setPreviewImage] = useState('') // Image to preview
 
-	// File upload handler
-	const handleFileUpload = ({ file }) => {
-		// Set only the latest uploaded file
-		setFileList([file]);
-	}
+  // File upload handler
+  const handleFileUpload = ({ fileList: newFileList }) => {
+    setFileList(newFileList); // Update the file list with the newly uploaded files
+  };
 
-	// Remove file handler
-	const handleRemoveFile = () => setFileList([])
+  // Handle preview for image file
+  const handlePreview = async (file) => {
+    if (!file.url && !file.preview) {
+      file.preview = await getBase64(file.originFileObj);
+    }
+    setPreviewImage(file.url || file.preview);
+    setPreviewOpen(true);
+  };
 
-	// Partner creation handler
-	const handleSubmit = async e => {
-		e.preventDefault()
+  // Remove file handler
+  const handleRemoveFile = () => setFileList([]);
 
-		// Prepare form data
-		const formData = new FormData()
-		formData.append('name', partnerName)
-		if (fileList.length > 0) {
-			formData.append('photo', fileList[0].originFileObj || fileList[0]) // Attach file as originFileObj if exists
-		}
+  // Partner creation handler
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-		try {
-			// API call to create a partner
-			await createPartner(formData)
-			toastr.success('Партнер успешно создан!')
-			isCloseCreateModal() // Close the modal
-			setPartnerName('') // Clear the input
-			setFileList([]) // Clear the file list
-		} catch (error) {
-			toastr.error('Ошибка при создании партнера! Попробуйте еще раз.')
-		}
-	}
+    // Prepare form data
+    const formData = new FormData();
+    formData.append('name', partnerName);
+    if (fileList.length > 0) {
+      formData.append('photo', fileList[0].originFileObj || fileList[0]); // Attach file as originFileObj if exists
+    }
 
-	return (
-		<Modal
-			title={<span className='text-[18px] font-bold'>Добавить Партнер</span>}
-			visible={visible}
-			onCancel={isCloseCreateModal}
-			footer={null}
-			width={600}
-		>
-			<form onSubmit={handleSubmit}>
-				{/* Name Input Field */}
-				<div className='flex flex-col gap-[10px]'>
-					<label>Название компании</label>
-					<Input
-						value={partnerName}
-						onChange={e => setPartnerName(e.target.value)}
-						required
-					/>
-				</div>
+    try {
+      // API call to create a partner
+      await createPartner(formData);
+      toastr.success('Партнер успешно создан!');
+      isCloseCreateModal(); // Close the modal
+      setPartnerName(''); // Clear the input
+      setFileList([]); // Clear the file list
+    } catch (error) {
+      toastr.error('Ошибка при создании партнера! Попробуйте еще раз.');
+    }
+  };
 
-				{/* File Upload Field */}
-				<div className='flex flex-col gap-[10px] mt-[10px] relative w-[20%]'>
-					<label className='font-bold text-[18px]'>Фото</label>
-					<Upload
-						name='photo'
-						listType='picture-card'
-						showUploadList={false}
-						beforeUpload={() => false} // Disable automatic upload
-						onChange={handleFileUpload}
-						className='relative overflow-hidden'
-					>
-						{fileList.length > 0 ? (
-							<div>
-								<img
-									src={URL.createObjectURL(fileList[0].originFileObj || fileList[0])}
-									alt='photo'
-									className=' object-cover'
-								/>
-								<Button
-									onClick={handleRemoveFile}
-									className='mt-[10px] absolute right-[10px] top-[10px] rounded-full py-[15px] px-[10px]'
-								>
-									<MdDelete />
-								</Button>
-							</div>
-						) : (
-							<div className='h-[40px] flex items-center justify-center'>
-								<UploadOutlined className='text-violet100 w-full h-full text-[40px]' />
-							</div>
-						)}
-					</Upload>
-				</div>
+  const uploadButton = (
+    <div>
+      <UploadOutlined />
+      <div style={{ marginTop: 8 }}>Upload</div>
+    </div>
+  );
 
-				{/* Submit Button */}
-                <div className='w-full flex flex-row justify-end'>
+  return (
+    <Modal
+      title={<span className='text-[18px] font-bold'>Добавить Партнер</span>}
+      visible={visible}
+      onCancel={isCloseCreateModal}
+      footer={null}
+      width={600}
+    >
+      <form onSubmit={handleSubmit}>
+        {/* Name Input Field */}
+        <div className='flex flex-col gap-[10px]'>
+          <label className='text-[16px] font-medium text-[#A6A6A6]'>Название компании</label>
+          <input
+            value={partnerName}
+            onChange={(e) => setPartnerName(e.target.value)}
+            required
+            className='p-[20px] rounded-[10px] text-[18px] border border-[#F0F0F0] outline-none text-titleDark'
+          />
+        </div>
+
+        {/* Custom File Upload Field */}
+        <div className='flex flex-col gap-[10px] mt-[10px] relative w-[30%]'>
+          <label className='text-[16px] font-medium text-[#A6A6A6]'>Фото</label>
+          <Upload
+            listType='picture-card'
+            fileList={fileList}
+            onPreview={handlePreview}
+            onChange={handleFileUpload}
+          >
+            {fileList.length >= 1 ? null : uploadButton}
+          </Upload>
+        </div>
+
+        {/* Image Preview Modal */}
+        {previewImage && (
+          <Image
+            wrapperStyle={{ display: 'none' }}
+            preview={{
+              visible: previewOpen,
+              onVisibleChange: (visible) => setPreviewOpen(visible),
+            }}
+            src={previewImage}
+          />
+        )}
+
+        {/* Submit Button */}
+        <div className='w-full flex flex-row justify-end'>
           <Button
-            htmlType="submit"
+            htmlType='submit'
             className='w-[30%] mt-[12px] flex py-[20px] px-[25px] rounded-full bg-violet100 text-white font-bold'
           >
             Сохранить
           </Button>
         </div>
-				
-			</form>
-		</Modal>
-	)
-}
+      </form>
+    </Modal>
+  );
+};
