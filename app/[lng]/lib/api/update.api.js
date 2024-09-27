@@ -2,7 +2,6 @@ import axios from 'axios';
 
 // Update Banner Information (Title, Description)
 export const updateBannerInfo = async (jsonData) => {
-	console.log(jsonData , "API JSON DATA")
   try {
     const res = await axios.put('http://213.230.91.55:8190/api/case', jsonData, {
       headers: {
@@ -15,7 +14,6 @@ export const updateBannerInfo = async (jsonData) => {
   }
 };
 export const updateQuestionUpdate = async (jsonData) => {
-	console.log(jsonData , "API JSON DATA")
   try {
     const res = await axios.put('http://213.230.91.55:8190/api/case', jsonData, {
       headers: {

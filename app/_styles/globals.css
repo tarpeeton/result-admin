@@ -12,3 +12,11 @@
 body {
 	font-family: "Montserrat", sans-serif;
 }
+
+
+input:focus  {
+	outline-color: #7B72EB;
+}
+textarea:focus  {
+	outline-color: #7B72EB;
+}

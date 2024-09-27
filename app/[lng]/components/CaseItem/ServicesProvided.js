@@ -6,7 +6,6 @@ const ServicesProvided = ({ result, ID }) => {
   const [open, setModalOpen] = useState(false);
 
   const toggleModalOpen = () => setModalOpen(!open);
-		console.log(result , 'RESULT')
   return (
     <div className="mt-[20px] py-[30px] px-[24px] rounded-[30px] bg-white mdl:py-[50px] mdl:px-[40px] 3xl:flex 3xl:flex-row mdl:rounded-[40px] 3xl:rounded-[50px]">
       {/* Заголовок */}

@@ -17,19 +17,21 @@ const CaseItemMain = ({ data }) => {
 		resultInstagramLink,
 		resultTelegramLink,
 	} = data
+
 	return (
 		<div className='px-[16px] bg-[#F8F8F8]'>
-			<Banner data={banner}   ID={data.id}/> 
-		 	<Question queryData={query} description={queryDescription} ID={data.id} />
-			<ServicesProvided result={providedService}  ID={data.id}/>
+			<Banner data={banner} ID={data.id} />
+			<Question queryData={query} description={queryDescription} ID={data.id} />
+			<ServicesProvided result={providedService} ID={data.id} />
 			<Result
 				resultDescription={resultDescription}
 				obtainedResult={obtainedResult}
 				resultSiteLink={resultSiteLink}
 				resultInstagramLink={resultInstagramLink}
 				resultTelegramLink={resultTelegramLink}
+				ID={data.id}
 			/>
-			<Images  slider={slider}/>
+			<Images slider={slider} ID={data.id} />
 		</div>
 	)
 }
