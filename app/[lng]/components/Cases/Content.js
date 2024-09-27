@@ -147,7 +147,7 @@ const Content = () => {
             <div className="relative">
               {item.slider.length > 0 && (
                 <Image
-                  src={item.slider[0].url}
+                  src={item?.slider[0]?.url}
                   width={1500}
                   height={900}
                   quality={100}

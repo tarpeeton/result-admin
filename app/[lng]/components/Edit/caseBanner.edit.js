@@ -5,16 +5,15 @@ import toastr from "toastr";
 import "toastr/build/toastr.min.css";
 import { updateBannerImage, updateBannerInfo } from '../../lib/api/update.api';
 import { UploadOutlined } from "@ant-design/icons";
-import { MdDelete } from 'react-icons/md';
 
-const EditCase = ({ isCloseCreateModal, visible, bannerID, bgPhotoId, photoID, title, description, bgPhotoSrc, photoSrc, Data_ID }) => {
+const EditCase = ({ isCloseCreateModal, visible, bannerID, bgPhotoId, photoID, title, description, bgPhotoSrc, PhotoSrc, Data_ID }) => {
   const [currentLang, setCurrentLang] = useState("ru");
   const [editCaseBanner, setEditCaseBanner] = useState({
     id: bannerID || 0,
     title: { uz: title, ru: title, en: title },
     shortDescription: { uz: description, ru: description, en: description },
     bgphoto: bgPhotoSrc || null,
-    photo: photoSrc || null,
+    photo: PhotoSrc || null,
     bgphotoID: bgPhotoId || 0,
     photoID: photoID || 0
   });
@@ -23,23 +22,24 @@ const EditCase = ({ isCloseCreateModal, visible, bannerID, bgPhotoId, photoID, t
   const [bgFileList, setBgFileList] = useState([]);
 
   useEffect(() => {
+    // Ensure that the props are properly initialized into state
     if (bannerID) {
       setEditCaseBanner({
         id: bannerID,
         title: { uz: title, ru: title, en: title },
         shortDescription: { uz: description, ru: description, en: description },
         bgphoto: bgPhotoSrc || null,
-        photo: photoSrc || null,
+        photo: PhotoSrc || null,
         bgphotoID: bgPhotoId || 0,
-        photoID: photoID || 0
+        photoID: photoID || 0 // Ensure the correct photoID is set
       });
 
-      if (photoSrc) {
+      if (PhotoSrc) {
         setFileList([{
           uid: "-1",
           name: "new-photo",
           status: "done",
-          url: photoSrc
+          url: PhotoSrc
         }]);
       }
 
@@ -52,7 +52,7 @@ const EditCase = ({ isCloseCreateModal, visible, bannerID, bgPhotoId, photoID, t
         }]);
       }
     }
-  }, [bannerID, bgPhotoSrc, photoSrc, title, description, bgPhotoId, photoID]);
+  }, [bannerID, bgPhotoSrc, PhotoSrc, title, description, bgPhotoId, photoID]);
 
   const handleLangSwitch = (lang) => {
     setCurrentLang(lang);
@@ -73,16 +73,6 @@ const EditCase = ({ isCloseCreateModal, visible, bannerID, bgPhotoId, photoID, t
   const handleFileUpload = ({ file, fileList }) => {
     setFileList(fileList);
     setEditCaseBanner({ ...editCaseBanner, photo: file });
-  };
-
-  const handleRemoveBgFile = () => {
-    setBgFileList([]);
-    setEditCaseBanner({ ...editCaseBanner, bgphoto: null, bgphotoID: 0 });
-  };
-
-  const handleRemoveFile = () => {
-    setFileList([]);
-    setEditCaseBanner({ ...editCaseBanner, photo: null, photoID: 0 });
   };
 
   const handleUpdateBannerInfo = async () => {
@@ -115,11 +105,11 @@ const EditCase = ({ isCloseCreateModal, visible, bannerID, bgPhotoId, photoID, t
   const handleUpdateImages = async () => {
     try {
       if (fileList.length > 0 && fileList[0].originFileObj) {
-        await updateBannerImage(editCaseBanner.photoID, fileList[0].originFileObj);
+        await updateBannerImage(editCaseBanner.photoID, fileList[0].originFileObj); // Using correct photoID
       }
 
       if (bgFileList.length > 0 && bgFileList[0].originFileObj) {
-        await updateBannerImage(editCaseBanner.bgphotoID, bgFileList[0].originFileObj);
+        await updateBannerImage(editCaseBanner.bgphotoID, bgFileList[0].originFileObj); // Using correct bgphotoID
       }
 
       toastr.success("Изображения успешно обновлены!");
@@ -164,7 +154,7 @@ const EditCase = ({ isCloseCreateModal, visible, bannerID, bgPhotoId, photoID, t
             value={editCaseBanner.title[currentLang]}
             onChange={(e) => handleChange(e, "title")}
             required
-            className='p-[20px]'
+            className='p-[20px] border'
           />
         </div>
 
@@ -174,35 +164,20 @@ const EditCase = ({ isCloseCreateModal, visible, bannerID, bgPhotoId, photoID, t
             value={editCaseBanner.shortDescription[currentLang]} 
             onChange={(e) => handleChange(e, "shortDescription")} 
             required 
-            className='p-[20px]' 
+            className='p-[20px] border' 
           />
         </div>
 
-        <div className="flex flex-col gap-[10px] mt-4 relative">
+        <div className="flex flex-col gap-[10px] mt-4">
           <label className='text-[16px] font-medium text-[#A6A6A6]'>Фоновое фото</label>
           <Upload
             name="bgphoto"
             listType="picture-card"
-            showUploadList={false}
-            beforeUpload={() => false} // Prevent automatic upload
+            fileList={bgFileList}
             onChange={handleBgFileUpload}
+            beforeUpload={() => false} // Prevent automatic upload
           >
-            {bgFileList.length > 0 ? (
-              <div>
-                <img
-                  src={bgFileList[0].url || URL.createObjectURL(bgFileList[0].originFileObj)}
-                  alt="bgphoto"
-                  className="w-full h-full object-cover"
-                />
-                <Button
-                  danger
-                  onClick={handleRemoveBgFile}
-                  className="absolute right-[10px] top-[10px] rounded-full py-[15px] px-[10px]"
-                >
-                  <MdDelete className="text-red-500" />
-                </Button>
-              </div>
-            ) : (
+            {bgFileList.length === 0 && (
               <div className="flex items-center justify-center h-[100px]">
                 <UploadOutlined className="text-violet100 text-[40px]" />
               </div>
@@ -210,31 +185,16 @@ const EditCase = ({ isCloseCreateModal, visible, bannerID, bgPhotoId, photoID, t
           </Upload>
         </div>
 
-        <div className="flex flex-col gap-[10px] mt-4 relative">
+        <div className="flex flex-col gap-[10px] mt-4">
           <label className='text-[16px] font-medium text-[#A6A6A6]'>Фото</label>
           <Upload
             name="photo"
             listType="picture-card"
-            showUploadList={false}
-            beforeUpload={() => false}
+            fileList={fileList}
             onChange={handleFileUpload}
+            beforeUpload={() => false}
           >
-            {fileList.length > 0 ? (
-              <div>
-                <img
-                  src={fileList[0].url || URL.createObjectURL(fileList[0].originFileObj)}
-                  alt="photo"
-                  className="w-full h-full object-cover"
-                />
-                <Button
-                  danger
-                  onClick={handleRemoveFile}
-                  className="absolute right-[10px] top-[10px] rounded-full py-[15px] px-[10px]"
-                >
-                  <MdDelete className="text-red-500" />
-                </Button>
-              </div>
-            ) : (
+            {fileList.length === 0 && (
               <div className="flex items-center justify-center h-[100px]">
                 <UploadOutlined className="text-violet100 text-[40px]" />
               </div>

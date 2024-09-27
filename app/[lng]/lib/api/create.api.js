@@ -106,3 +106,18 @@ export const createMembers = async formData => {
 	}
 }
 
+
+export const createImage = async formData => {
+	try {
+		const response = await axios.post(
+			'http://213.230.91.55:8190/api/photo', // URL from your screenshot
+			formData,
+			
+		)
+		return response.data
+	} catch (error) {
+		console.error('Error uploading images:', error)
+		throw error
+	}
+}
+

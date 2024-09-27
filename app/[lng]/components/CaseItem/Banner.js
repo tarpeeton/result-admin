@@ -6,7 +6,6 @@ const Banner = ({ data  , ID}) => {
 	const [open, openModal] = useState(false)
 	const editModalOpen = () => openModal(true)
 	const closeModal = () => openModal(false)
-
 	return (
 		<div
 			className='w-full rounded-[30px] py-[30px] px-[20px] 3xl:flex 3xl:flex-row 3xl:justify-center 3xl:items-center mt-[20px] mdl:mt-[30px]  mdl:rounded-[40px] 3xl:rounded-[50px]'
@@ -41,7 +40,7 @@ const Banner = ({ data  , ID}) => {
 				visible={open}
 				bannerID={data.id}
 				bgPhotoId={data.background?.id}
-				photoID={data.photo?.id}
+				photoID={data.photo.id}
 				title={data.title}
 				description={data.shortDescription}
 				bgPhotoSrc={data.background.url}

@@ -13,10 +13,25 @@ body {
 	font-family: "Montserrat", sans-serif;
 }
 
-
+input  , textarea{
+	border: 1px;
+	border-radius: 10px !important;
+	border-color: #F0F0F0 !important;
+	padding: 20px !important;
+}
 input:focus  {
 	outline-color: #7B72EB;
 }
 textarea:focus  {
 	outline-color: #7B72EB;
+}
+.ant-upload {
+	border-style: none !important;
+	width: 210px !important;
+	height: 200px !important;
+}
+.ant-upload & .ant-upload-select {
+	width: 210px;
+	height: 110px !important;
+
 }

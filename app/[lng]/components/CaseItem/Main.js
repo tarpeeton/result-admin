@@ -31,7 +31,7 @@ const CaseItemMain = ({ data }) => {
 				resultTelegramLink={resultTelegramLink}
 				ID={data.id}
 			/>
-			<Images slider={slider} ID={data.id} />
+			<Images slider={slider} ID={data.id}  />
 		</div>
 	)
 }
