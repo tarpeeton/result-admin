@@ -17,6 +17,22 @@ export const getReviewsAll = async lng => {
 	}
 }
 
+export const getBlogWithSlug = async (slug) => {
+	try {
+	  const res = await axios.get(`http://213.230.91.55:8190/api/blog/${slug}`, {
+		headers: {
+		  'Accept-Language': '-' // Use wildcard to request all languages
+		},
+	  }).catch((error) => {
+		console.error("Error for fetching blogsx", error)
+	  });
+  
+	  return res.data;
+	} catch (error) {
+	  // Throw an error if the request fails
+	  throw new Error(error.message || 'Failed to fetch blog data');
+	}
+  };
 // GET REVIEW WITH ID
 
 // GET MAIN BANNER

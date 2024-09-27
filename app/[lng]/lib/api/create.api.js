@@ -121,3 +121,21 @@ export const createImage = async formData => {
 	}
 }
 
+// BLOG CREATE
+export const createBlog = async (formData) => {
+	try {
+	  const response = await axios.post(
+		'http://213.230.91.55:8190/api/blog',
+		formData,
+		{
+		  headers: {
+			"Content-Type": "multipart/form-data", // Explicitly setting Content-Type
+		  },
+		}
+	  );
+	  return response.data;
+	} catch (error) {
+	  console.error("Error uploading blog:", error);
+	  throw error;
+	}
+  };
