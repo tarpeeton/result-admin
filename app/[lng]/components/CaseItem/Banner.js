@@ -1,11 +1,13 @@
 'use client'
 import { useState } from 'react'
 import  EditCase  from '../Edit/caseBanner.edit'
+import { useParams } from 'next/navigation'
 
 const Banner = ({ data  , ID}) => {
 	const [open, openModal] = useState(false)
 	const editModalOpen = () => openModal(true)
 	const closeModal = () => openModal(false)
+	const {lng} = useParams()
 	return (
 		<div
 			className='w-full rounded-[30px] py-[30px] px-[20px] 3xl:flex 3xl:flex-row 3xl:justify-center 3xl:items-center mt-[20px] mdl:mt-[30px]  mdl:rounded-[40px] 3xl:rounded-[50px]'
@@ -18,12 +20,12 @@ const Banner = ({ data  , ID}) => {
 			<div className='3xl:w-[60%] 3xl:flex 3xl:items-center 3xl:justify-center mb-[50px]'>
 				<div className='3xl:w-[80%]'>
 					<h1 className='text-white text-[35px] mdl:text-[50px] font-bold mb-[15px]'>
-						{data.title}
+						{data.title[lng]}
 					</h1>
 
 					{/* Краткое описание */}
 					<p className='text-white text-[14px] mdl:text-[20px] 3xl:text-[21px] mb-[15px]'>
-						{data.shortDescription}
+						{data.shortDescription[lng]}
 					</p>
 
 					<button

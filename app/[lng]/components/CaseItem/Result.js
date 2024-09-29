@@ -1,6 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { EditResult } from '../Edit/caseResults.edit'
+import { useParams } from 'next/navigation'
 const Result = ({
 	resultDescription,
 	obtainedResult,
@@ -12,6 +13,7 @@ const Result = ({
 	const [expandedItems, setExpandedItems] = useState([])
 	const [open, setOpen] = useState(false)
 	const toggleModalOpen = () => setOpen(!open)
+	const {lng} = useParams()
 	// Toggle the expanded state for "show more" functionality
 	const toggleShowMore = () => {
 		setExpandedItems(prevState =>
@@ -57,10 +59,10 @@ const Result = ({
 					<div className='flex flex-col' key={index}>
 						<div key={index} className='mb-6 3xl:mb-0'>
 							<p className='text-[35px] mdl:text-[40px] font-medium text-[#010101] 3xl:text-[50px]'>
-								{item?.name}
+								{item?.name[lng]}
 							</p>
 							<p className='text-[14px] mdl:text-[20px] text-[#A6A6A6] 3xl:text-[18px] font-robotoFlex'>
-								{item?.result}
+								{item?.result[lng]}
 							</p>
 						</div>
 					</div>
@@ -70,7 +72,7 @@ const Result = ({
 						<p className='text-[#454545]'>
 							{expandedItems.includes(0) || resultDescription?.length <= 50
 								? resultDescription
-								: `${resultDescription?.slice(0, 50)}...`}
+								: `${resultDescription[lng]?.slice(0, 50)}...`}
 						</p>
 						{resultDescription?.length > 50 && (
 							<button

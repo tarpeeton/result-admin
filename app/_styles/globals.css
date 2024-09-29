@@ -16,9 +16,10 @@ body {
 input  , textarea{
 	border: 1px;
 	border-radius: 10px !important;
-	border-color: #F0F0F0 !important;
+	border-color: #F0F0F0 ;
 	padding: 20px !important;
 }
+
 input:focus  {
 	outline-color: #7B72EB;
 }

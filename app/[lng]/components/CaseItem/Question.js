@@ -1,11 +1,12 @@
 "use client";
 import { useState } from "react";
 import { EditQuestion } from '../Edit/caseQuation.update';
+import { useParams } from 'next/navigation'
 
 const Question = ({ queryData, description , ID }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [open , setOpen] = useState(false)
-
+  const {lng} = useParams()
 
   const editModalOpen = () => setOpen(!open)
   // Toggle function for expanding or collapsing the description
@@ -38,7 +39,7 @@ const Question = ({ queryData, description , ID }) => {
               key={index}
               className="text-[15px] list-disc font-medium text-titleDark mdl:text-[20px] 3xl:text-[25px] font-robotoFlex"
             >
-              {item}
+              {item[lng]}
             </li>
           ))}
         </ul>
@@ -59,7 +60,7 @@ const Question = ({ queryData, description , ID }) => {
             </>
           ) : (
             <p className="text-[#454545] text-[15px] mdl:text-[18px] 3xl:text-[20px]">
-              {description}
+              {description[lng]}
             </p>
           )}
         </div>

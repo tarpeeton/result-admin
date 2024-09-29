@@ -33,7 +33,7 @@ const Content = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const responseData = await getAllCases(lng, null); // Fetch data with null typeID for default case
+        const responseData = await getAllCases(null , lng); // Fetch data with null typeID for default case
         setFilteredData(responseData || []);
       } catch (error) {
         console.error("Error fetching cases:", error.message);
