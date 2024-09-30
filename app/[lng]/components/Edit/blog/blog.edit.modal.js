@@ -1,11 +1,12 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { Modal, Upload, Button } from 'antd';
+import { UploadOutlined } from '@ant-design/icons';
 import toastr from 'toastr';
 import 'toastr/build/toastr.min.css';
 import { updateBlog, editImage } from '@/app/[lng]/lib/api/edit.api';
-import { UploadOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/navigation';
+import { IoClose } from 'react-icons/io5';
 
 export const EditBlog = ({
     isCloseCreateModal,
@@ -14,7 +15,9 @@ export const EditBlog = ({
     optionID, // This is the ID of the specific option to update
     titleData,
     descriptionData,
-    imageID
+    imageID,
+    imageURL, // Provide the existing image URL for preview
+    orderNumData, // Provide existing orderNum value
 }) => {
     const [currentLang, setCurrentLang] = useState('ru');
     const router = useRouter();
@@ -32,6 +35,7 @@ export const EditBlog = ({
             ru: '',
             en: '',
         },
+        orderNum: orderNumData || 0, // Initialize with the existing orderNum
     });
 
     const languages = [
@@ -39,6 +43,20 @@ export const EditBlog = ({
         { code: 'uz', label: 'UZ' },
         { code: 'en', label: 'EN' },
     ];
+
+    // Set up the default file list for the existing image
+    useEffect(() => {
+        if (imageURL) {
+            setFileList([
+                {
+                    uid: '-1', // Unique identifier for AntD Upload component
+                    name: 'Current Image', // Display name for the existing image
+                    status: 'done', // Status for the image
+                    url: imageURL, // URL of the image for preview
+                },
+            ]);
+        }
+    }, [imageURL]);
 
     // Fetch existing option data when the modal opens
     useEffect(() => {
@@ -55,9 +73,10 @@ export const EditBlog = ({
                     ru: descriptionData.ru || '',
                     en: descriptionData.en || '',
                 },
+                orderNum: orderNumData || 0, // Set the existing orderNum
             });
         }
-    }, [optionID, titleData, descriptionData]);
+    }, [optionID, titleData, descriptionData, orderNumData]);
 
     // Switch between different languages
     const handleLangSwitch = lang => {
@@ -91,6 +110,11 @@ export const EditBlog = ({
         setFileList(fileList);
     };
 
+    // Handle image removal
+    const handleRemoveImage = () => {
+        setFileList([]);
+    };
+
     // Submit updated blog data and handle image upload
     const handleSubmit = async e => {
         e.preventDefault();
@@ -102,7 +126,7 @@ export const EditBlog = ({
                     id: editBlogData.id, // Option ID inside the options array
                     title: editBlogData.title, // Title translations
                     description: editBlogData.description, // Description translations
-                    orderNum: 0, // You can adjust this based on your needs
+                    orderNum: editBlogData.orderNum, // Use existing orderNum
                 },
             ],
         };
@@ -113,9 +137,9 @@ export const EditBlog = ({
             toastr.success('Блог успешно обновлен!');
 
             // Check if there is an image to upload
-            if (fileList.length > 0) {
+            if (fileList.length > 0 && !fileList[0].url) { // If it's a new upload, not the existing one
                 const formData = new FormData();
-                formData.append('photo', fileList[0].originFileObj); // Add the selected file
+                formData.append('new-photo', fileList[0].originFileObj); // Add the selected file
 
                 // Call the editImage function to update the image by imageID
                 await editImage(imageID, formData);
@@ -175,15 +199,38 @@ export const EditBlog = ({
 
                 {/* Image Upload */}
                 <div className='flex flex-col gap-[10px] mt-4'>
-                    <label className='text-[16px] font-medium text-[#A6A6A6]'>Загрузить Фото</label>
-                    <Upload
-                        fileList={fileList}
-                        onChange={handleUploadChange}
-                        beforeUpload={() => false} // Prevent automatic upload
-                        accept="image/*"
-                    >
-                        <Button icon={<UploadOutlined />}>Выберите Фото</Button>
-                    </Upload>
+                    <label className='text-[16px] font-medium text-[#000]'>Изображение</label>
+                    <div className='relative'>
+                        {fileList.length > 0 ? (
+                            <div className='relative'>
+                                <img
+                                    src={fileList[0].url || URL.createObjectURL(fileList[0].originFileObj)}
+                                    alt="Image preview"
+                                    className='w-[300px] h-[200px] object-cover rounded-md'
+                                />
+                                <button
+                                    className='absolute top-2 right-2 bg-white rounded-full p-1 shadow-lg'
+                                    onClick={handleRemoveImage}
+                                >
+                                    <IoClose className='text-black' size={18} />
+                                </button>
+                            </div>
+                        ) : (
+                            <Upload
+                                fileList={fileList}
+                                onChange={handleUploadChange}
+                                beforeUpload={() => false} // Prevent automatic upload
+                                accept="image/*"
+                                listType="picture-card"
+                                className="upload-custom"
+                            >
+                                <div className='flex flex-col items-center justify-center'>
+                                    <UploadOutlined style={{ fontSize: '24px', color: '#888' }} />
+                                    <p>Загрузить Фото</p>
+                                </div>
+                            </Upload>
+                        )}
+                    </div>
                 </div>
 
                 <div className='w-full flex flex-row justify-end mt-4 items-center'>

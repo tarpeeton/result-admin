@@ -159,6 +159,7 @@ const MainBlogItem = () => {
           optionID={editingOptionId}
           titleData={editedData.title}
           descriptionData={editedData.description}
+          imageURL={editedData.photo?.url}
           imageID={editedData.photo?.id} // Pass the image ID if needed
         />
     </div>
