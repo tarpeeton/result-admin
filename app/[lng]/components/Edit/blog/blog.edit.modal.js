@@ -97,7 +97,7 @@ export const EditBlog = ({
 
         const jsonData = {
             id: blogID, // This is the blog ID
-            options: [
+            option: [
                 {
                     id: editBlogData.id, // Option ID inside the options array
                     title: editBlogData.title, // Title translations

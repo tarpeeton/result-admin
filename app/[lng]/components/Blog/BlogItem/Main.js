@@ -65,69 +65,6 @@ const MainBlogItem = () => {
         {blog.option && blog.option.length > 0 ? (
           blog.option.map(optio => (
             <div key={optio.id} className="mb-8">
-              {editingOptionId === optio.id ? (
-                // Render input fields for editing
-                <div>
-                  {/* Title input */}
-                  <input
-                    type="text"
-                    value={editedData.title[lng]}
-                    onChange={(e) => handleInputChange('title', e.target.value, lng)}
-                    className='text-[23px] font-bold mdl:text-[40px] 3xl:text-[45px] text-titleDark w-full border p-2'
-                  />
-
-                  {/* Image URL input */}
-                  <input
-                    type="text"
-                    value={editedData.photo.url}
-                    onChange={(e) => setEditedData(prevData => ({
-                      ...prevData,
-                      photo: {
-                        ...prevData.photo,
-                        url: e.target.value,
-                      },
-                    }))}
-                    className='mt-[15px] mdl:mt-[40px] w-full border p-2'
-                    placeholder='Image URL'
-                  />
-
-                  {/* Description input */}
-                  <textarea
-                    value={editedData.description[lng]}
-                    onChange={(e) => handleInputChange('description', e.target.value, lng)}
-                    className='text-[15px] mdl:text-[20px] 3xl:text-[22px] text-[#454545] font-medium mt-[20px] mdl:mt-[30px] 3xl:mt-[50px] w-full border p-2'
-                    rows={4}
-                  />
-
-                  {/* Text input */}
-                  <textarea
-                    value={editedData.text}
-                    onChange={(e) => setEditedData(prevData => ({
-                      ...prevData,
-                      text: e.target.value,
-                    }))}
-                    className='text-[15px] mdl:text-[20px] 3xl:text-[22px] text-[#454545] font-medium mt-[20px] mdl:mt-[30px] 3xl:mt-[50px] w-full border p-2'
-                    rows={10}
-                  />
-
-                  {/* Action buttons */}
-                  <div className='mt-4'>
-                    <button
-                      onClick={handleSave}
-                      className='bg-blue-500 text-white px-4 py-2 rounded mr-2'
-                    >
-                      Save
-                    </button>
-                    <button
-                      onClick={handleCancel}
-                      className='bg-gray-500 text-white px-4 py-2 rounded'
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                // Render the option normally
                 <div>
                   {/* Render the title */}
                   <p className='text-[23px] font-bold mdl:text-[40px] 3xl:text-[45px] text-titleDark'>
@@ -192,12 +129,17 @@ const MainBlogItem = () => {
                   {/* Edit button */}
                   <button
                     onClick={() => handleEditClick(optio.id)}
-                    className='mt-4 bg-blue-500 text-white px-4 py-2 rounded'
+                    className='mt-4 bg-violet100 text-white rounded-full py-[15px] px-[20px]'
                   >
-                    Edit
+                    Редактировать
+                  </button>
+                  <button
+                    onClick={() => handleEditClick(optio.id)}
+                    className='mt-4 bg-violet100 text-white rounded-full py-[15px] px-[20px]'
+                  >
+                    Удалить блок
                   </button>
                 </div>
-              )}
             </div>
           ))
         ) : (
@@ -210,16 +152,15 @@ const MainBlogItem = () => {
       </div>
 
       {/* EditBlog Modal for editing the selected blog option */}
-      {editingOptionId !== null && (
         <EditBlog
           visible={isModalVisible}
           isCloseCreateModal={handleCancel}
-          blogID={editingOptionId}
+          blogID={blog.id}
+          optionID={editingOptionId}
           titleData={editedData.title}
           descriptionData={editedData.description}
           imageID={editedData.photo?.id} // Pass the image ID if needed
         />
-      )}
     </div>
   );
 };
