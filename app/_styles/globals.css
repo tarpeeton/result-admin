@@ -14,10 +14,13 @@ body {
 }
 
 input  , textarea{
-	border: 1px;
-	border-radius: 10px !important;
-	border-color: #F0F0F0 ;
 	padding: 20px !important;
+	border-radius: 10px !important;
+}
+.ant-upload-list-item-container {
+	width: 250px !important;
+	padding: 0 !important;
+	height: 120px !important;
 }
 
 input:focus  {

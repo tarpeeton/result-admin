@@ -28,6 +28,7 @@ const Content = () => {
   const [modal, setModal] = useState(false);
   const mobileSpansRef = useRef([]);
   const desktopSpansRef = useRef([]);
+  console.log(filteredData , 'dsf');
   const {lng} = useParams()
   // Fetch and set data on initial render
   useEffect(() => {
@@ -90,7 +91,7 @@ const Content = () => {
       {/* Mobile Carousel for Filter Options */}
       <div className="lg:hidden w-full px-[16px] py-[20px]">
         <Carousel responsive={responsive} arrows={false} showDots={false} infinite={false}>
-          {items.map((item) => (
+          {items?.map((item) => (
             <div key={item.id} className="text-center">
               <button
                 className={`text-[15px] pb-[10px] font-semibold ${
@@ -145,9 +146,9 @@ const Content = () => {
             className="w-full mt-[20px] 3xl:w-[45%] 6xl:max-w-[99%] relative group cursor-pointer"
           >
             <div className="relative">
-              {item.slider.length > 0 && (
+            {item.slider.length > 0 && item.slider[0]?.url && (
                 <Image
-                  src={item?.slider[0]?.url}
+                  src={item.slider[0].url}
                   width={1500}
                   height={900}
                   quality={100}

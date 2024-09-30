@@ -43,7 +43,6 @@ const Reviews = () => {
 			try {
 				const data = await getReviewsAll()
 				setReviews(data)
-        console.log(data , "REVIEWS")
 			} catch (error) {
 				console.error('Error fetching reviews:', error)
 				setError('Failed to fetch reviews')

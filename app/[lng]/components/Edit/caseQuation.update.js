@@ -5,7 +5,8 @@ import toastr from 'toastr'
 import 'toastr/build/toastr.min.css'
 import { updateQuestionUpdate } from '../../lib/api/update.api'
 import { IoIosClose } from "react-icons/io";
-
+import { useRouter } from 'next/navigation';
+	
 
 export const EditQuestion = ({
 	isCloseCreateModal,
@@ -15,6 +16,7 @@ export const EditQuestion = ({
 	description,
 }) => {
 	const [currentLang, setCurrentLang] = useState('ru')
+	const router = useRouter()
 	const [editMemberData, setEditMemberData] = useState({
 		id: questionID,
 		query: [],
@@ -38,14 +40,14 @@ export const EditQuestion = ({
 			setEditMemberData({
 				id: questionID,
 				query: queryData.map(q => ({
-					uz: q || '',
-					ru: q || '',
-					en: q || '',
+					uz: q.uz || '',
+					ru: q.ru || '',
+					en: q.en || '',
 				})),
 				description: {
-					uz: description || '',
-					ru: description || '',
-					en: description || '',
+					uz: description.uz || '',
+					ru: description.ru || '',
+					en: description.en || '',
 				},
 			})
 		}
@@ -112,21 +114,21 @@ export const EditQuestion = ({
 			await updateQuestionUpdate(jsonData)
 			toastr.success('Вопрос успешно обновлен!')
 			isCloseCreateModal()
+			router.refresh()
 		} catch (error) {
 			toastr.error('Не удалось обновить вопрос.')
 		}
 	}
-
 	return (
 		<Modal
-			title='Редактировать Запросы'
+		title={<span style={{ fontSize: '30px', fontWeight: 'bold' }}>Редактировать Запросы</span>}
 			open={visible}
 			onCancel={isCloseCreateModal}
 			footer={null}
 			width={1000}
 		>
 			<form onSubmit={handleSubmit}>
-				<div className='flex gap-2 mb-4'>
+				<div className='flex gap-2 mb-4 mt-[20px]'>
 					{languages.map(lang => (
 						<button
 							key={lang.code}

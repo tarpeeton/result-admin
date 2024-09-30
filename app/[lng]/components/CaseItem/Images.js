@@ -9,6 +9,8 @@ import { deleteImage } from '../../lib/api/delete.api';
 import toastr from "toastr";
 import "toastr/build/toastr.min.css";
 import { CreateSliders } from '../Create/case.slider';
+
+import { useRouter } from 'next/navigation';
 const responsive = {
 	mobile: {
 		breakpoint: { max: 768, min: 0 },
@@ -30,14 +32,15 @@ const Images = ({ slider , ID }) => {
 		return null;
 	}
 
+	  const router = useRouter()
 	const [open, setOpen] = useState(false);
 	const toggleModalOpen = () => setOpen(!open);
 
 	const DeleteImage = async (id) => {
 		try {
 			await deleteImage(id);
+			router.refresh();
 			toastr.success('Image deleted successfully!'); // Show success toast
-			console.log(id);
 		} catch (error) {
 			toastr.error('Failed to delete the image.'); // Show error toast
 			console.error(error);

@@ -19,3 +19,14 @@ export const editImage = async (id ,photoData) => {
     throw new Error(error.response ? error.response.data.message : error.message); // Provide more detailed error message
   }
 };
+
+
+export const updateBlog = async (jsonData) => {
+  try {
+    const res = await axios.put(`http://213.230.91.55:8190/api/blog`, jsonData); // Pass jsonData directly
+    return res.data;
+  } catch (error) {
+    // Handle the error
+    throw new Error(error.response ? error.response.data.message : error.message); // Provide more detailed error message
+  }
+}

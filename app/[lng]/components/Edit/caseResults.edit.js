@@ -8,7 +8,7 @@ import { IoIosClose } from 'react-icons/io'
 import { FaInstagram } from "react-icons/fa";
 import { FaTelegramPlane } from "react-icons/fa";
 import { CiGlobe } from "react-icons/ci";
-
+import { useRouter } from 'next/navigation';
 export const EditResult = ({
     obtainedResult,  // List of existing results
     ID,
@@ -31,6 +31,7 @@ export const EditResult = ({
         resultTelegramLink: resultTelegramLink || '',
     })
 
+    const router = useRouter()
     const languages = [
         { code: 'ru', label: 'RU' },
         { code: 'uz', label: 'UZ' },
@@ -44,21 +45,21 @@ export const EditResult = ({
                 obtainedResult: obtainedResult.map(result => ({
                     id: result.id, // Existing results have an ID
                     name: {
-                        uz: result.name || '',
-                        ru: result.name || '',
-                        en: result.name || '',
+                        uz: result.name.uz || '',
+                        ru: result.name.ru || '',
+                        en: result.name.en || '',
                     },
                     result: {
-                        uz: result.result || '',
-                        ru: result.result || '',
-                        en: result.result || '',
+                        uz: result.result.uz || '',
+                        ru: result.result.ru || '',
+                        en: result.result.en || '',
                     },
                     orderNum: result.orderNum || '',
                 })),
                 resultDescription: {
-                    uz: resultDescription || '',
-                    ru: resultDescription || '',
-                    en: resultDescription || '',
+                    uz: resultDescription.uz || '',
+                    ru: resultDescription.ru || '',
+                    en: resultDescription.en || '',
                 },
                 resultSiteLink: resultSiteLink || '',
                 resultInstagramLink: resultInstagramLink || '',
@@ -147,6 +148,7 @@ export const EditResult = ({
             await updateQuestionUpdate(payload)
             toastr.success('Результаты успешно обновлены!')
             close()
+router.refresh()
         } catch (error) {
             toastr.error('Не удалось обновить результаты.')
         }
@@ -154,13 +156,13 @@ export const EditResult = ({
 
     return (
         <Modal
-            title='Редактировать Результаты'
+            title={<span style={{ fontSize: '30px', fontWeight: 'bold'}}>Редактировать Результаты</span>}
             open={visible}
             onCancel={close}
             footer={null}
             width={1400}
         >
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} className='mt-[20px]'>
                 <div className='flex flex-row justify-between items-center mb-4'>
                     <div className='flex flex-row gap-2 h-[40px]'>
                         {languages.map(lang => (

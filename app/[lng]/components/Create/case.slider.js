@@ -6,10 +6,11 @@ import { createImage } from '../../lib/api/create.api'
 import { updateQuestionUpdate } from '../../lib/api/update.api';
 import toastr from "toastr";
 import "toastr/build/toastr.min.css"; // Toastr CSS for notifications
+import { useRouter } from 'next/navigation'
 
-export const CreateSliders = ({ close, visible, onImagesUploaded, ID }) => {
+export const CreateSliders = ({ close, visible, ID }) => {
     const [fileList, setFileList] = useState([])
-
+    const router = useRouter()
     // Handle file upload, allowing multiple files
     const handleFileUpload = ({ fileList }) => {
         setFileList(fileList)
@@ -43,6 +44,7 @@ export const CreateSliders = ({ close, visible, onImagesUploaded, ID }) => {
 
             toastr.success('Images uploaded and slider updated successfully!')
             close() // Close modal after success
+            router.refresh()
             setFileList([]) // Reset the file list after successful upload
         } catch (error) {
             toastr.error('Error uploading images or updating slider. Please try again.')
@@ -52,16 +54,17 @@ export const CreateSliders = ({ close, visible, onImagesUploaded, ID }) => {
 
     return (
         <Modal
-            title={<span className='text-[18px] font-bold'>Добавить Слидер</span>}
+            title={<span className='text-[30px] font-bold'>Добавить Слидер</span>}
             open={visible}
             onCancel={close}
             footer={null}
             width={900}
+            
         >
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} className='mt-[20px]'>
                 {/* Multiple File Upload Field */}
                 <div className='flex flex-col gap-[10px] mt-4 relative'>
-                    <label className='text-[16px] font-medium text-[#A6A6A6]'>
+                    <label className='text-[16px] font-medium text-titleDark'>
                         Слидер
                     </label>
                     <Upload
@@ -83,7 +86,7 @@ export const CreateSliders = ({ close, visible, onImagesUploaded, ID }) => {
                 <div className='w-full flex flex-row justify-end'>
                     <button
                         type='submit'
-                        className='w-[30%] mt-[12px] flex py-[20px] px-[25px] rounded-full bg-violet100 text-white font-bold'
+                        className='w-[30%] mt-[12px] flex py-[20px] px-[25px] rounded-full bg-violet100 text-white font-bold text-center justify-center items-center text-[18px]'
                     >
                         Сохранить
                     </button>

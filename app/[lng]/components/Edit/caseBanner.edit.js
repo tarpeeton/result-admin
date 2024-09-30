@@ -6,6 +6,8 @@ import 'toastr/build/toastr.min.css'
 import { updateBannerImage, updateBannerInfo } from '../../lib/api/update.api'
 import { UploadOutlined } from '@ant-design/icons'
 import { lang } from '../constants/langugaes'
+import { IoClose } from "react-icons/io5";
+import { useRouter } from 'next/navigation';
 const EditCase = ({
 	isCloseCreateModal,
 	visible,
@@ -19,7 +21,6 @@ const EditCase = ({
 	Data_ID,
 }) => {
 	const [currentLang, setCurrentLang] = useState('ru')
-	console.log(currentLang, 'MJBF')
 	const [editCaseBanner, setEditCaseBanner] = useState({
 		id: bannerID || 0,
 		title: { uz: title.uz, ru: title.ru, en: title.en },
@@ -36,7 +37,7 @@ const EditCase = ({
 
 	const [fileList, setFileList] = useState([])
 	const [bgFileList, setBgFileList] = useState([])
-
+	const router = useRouter()
 	useEffect(() => {
 		// Ensure that the props are properly initialized into state
 		if (bannerID) {
@@ -121,6 +122,7 @@ const EditCase = ({
 		try {
 			await updateBannerInfo(jsonData)
 			toastr.success('Информация о баннере успешно обновлена!')
+			router.refresh()
 		} catch (error) {
 			toastr.error('Не удалось обновить информацию о баннере.')
 		}
@@ -158,19 +160,20 @@ const EditCase = ({
 
 	return (
 		<Modal
-			title='Редактировать Баннер'
+    title={<span style={{ fontSize: '30px', fontWeight: 'bold'}}>Редактировать Баннер</span>}
 			open={visible}
 			onCancel={isCloseCreateModal}
 			footer={null}
 			width={1200}
+      closeIcon={<IoClose className='flex items-center justify-center'  style={{ fontSize: '30px' }} />}
 		>
 			<form onSubmit={handleSubmit}>
-				<div className='flex gap-2 mb-4'>
+				<div className='flex gap-2 mb-4 mt-[20px]'>
 					{lang.map(lang => (
 						<button
 							key={lang}
 							type='button'
-							className={`px-4 py-2 ${
+							className={`px-4 py-2 rounded-lg ${
 								currentLang === lang ? 'bg-violet100 text-white' : 'bg-gray-200'
 							}`}
 							onClick={() => handleLangSwitch(lang)}
@@ -182,13 +185,12 @@ const EditCase = ({
 
 				<div className='flex flex-col gap-[10px]'>
 					<label className='text-[16px] font-medium text-[#A6A6A6]'>
-						Заголовок
+          Заголовок баннера
 					</label>
 					<input
 						value={editCaseBanner.title[currentLang]}
 						onChange={e => handleChange(e, 'title')}
-						required
-						className='p-[20px] border border-[#F0F0F0]'
+						className='p-[20px] border border-[#F0F0F0] text-titleDark text-[18px] font-medium'
 					/>
 				</div>
 
@@ -199,15 +201,14 @@ const EditCase = ({
 					<input
 						value={editCaseBanner.shortDescription[currentLang]}
 						onChange={e => handleChange(e, 'shortDescription')}
-						required
-						className='p-[20px] border border-[#F0F0F0]'
+						className='p-[20px] border border-[#F0F0F0] text-titleDark text-[18px] font-medium'
 					/>
 				</div>
 
-				<div className='flex flex-row items-center'>
-					<div className='flex flex-col gap-[10px] mt-4'>
-						<label className='text-[16px] font-medium text-[#A6A6A6]'>
-							Фоновое фото
+				<div className='flex flex-row items-center justify-between'>
+					<div className='flex flex-col gap-[10px] mt-4 w-[45%]  border border-[#F0F0F0] p-[20px] rounded-[20px]'>
+						<label className='text-[18px]  text-titleDark font-semibold'>
+            Фон баннера
 						</label>
 						<Upload
 							name='bgphoto'
@@ -223,9 +224,9 @@ const EditCase = ({
 							)}
 						</Upload>
 					</div>
-					<div className='flex flex-col gap-[10px] mt-4'>
-						<label className='text-[16px] font-medium text-[#A6A6A6]'>
-							Фото
+					<div className='flex flex-col gap-[10px] mt-4 w-[45%] border border-[#F0F0F0] p-[20px] rounded-[20px]'>
+						<label className='text-[18px]  text-titleDark font-semibold'>
+            Изображение баннера
 						</label>
 						<Upload
 							name='photo'
@@ -248,7 +249,7 @@ const EditCase = ({
 						type='submit'
 						className='py-[15px] w-[20%] px-[20px] bg-violet100 text-[18px] font-bold text-center text-white rounded-full'
 					>
-						Обновить
+						Сохранить
 					</button>
 				</div>
 			</form>
