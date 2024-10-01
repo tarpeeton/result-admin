@@ -1,12 +1,11 @@
 import { useState } from 'react'
-import { Modal, Input, Button, Upload } from 'antd'
+import { Modal, Upload } from 'antd'
 import { MdDeleteForever } from 'react-icons/md'
 import { createBlog } from '../../../lib/api/create.api'
 import toastr from 'toastr'
 import 'toastr/build/toastr.min.css'
 import { lang } from '../../constants/langugaes'
 import { IoIosAddCircleOutline } from 'react-icons/io'
-
 import { IoClose } from 'react-icons/io5'
 
 export const BlogCreateModal = ({ close, open }) => {
@@ -109,12 +108,12 @@ export const BlogCreateModal = ({ close, open }) => {
 			width={800}
 			title={
 				<span style={{ fontSize: '30px', fontWeight: 'bold' }}>
-					Редактировать Блог
+					Создать Блог
 				</span>
 			}
 			closeIcon={<IoClose size={30} />}
 		>
-			<form onSubmit={handleSubmit}>
+			<form onSubmit={handleSubmit} className='mt-[30px]'>
 				<div className='language-switcher flex gap-2 mb-4'>
 					{lang.map(lang => (
 						<button
@@ -134,7 +133,12 @@ export const BlogCreateModal = ({ close, open }) => {
 					<div key={index} className='option-block mb-4 p-4 border rounded-lg'>
 						<div className='flex gap-4 mb-2 flex-col'>
 							<div className='flex flex-col'>
-								<label>Title ({currentLang.toUpperCase()})</label>
+								<label
+									className='text-[#A6A6A6] font-robotoFlex font-medium
+                 text-[16px]'
+								>
+									Заголовок статьи ({currentLang.toUpperCase()})
+								</label>
 								<input
 									value={option.title[currentLang]}
 									onChange={e => handleInputChange(e, index, 'title')}
@@ -144,7 +148,12 @@ export const BlogCreateModal = ({ close, open }) => {
 							</div>
 
 							<div className='flex flex-col'>
-								<label>Text ({currentLang.toUpperCase()})</label>
+								<label
+									className='text-[#A6A6A6] font-robotoFlex font-medium
+                 text-[16px]'
+								>
+									Текст ({currentLang.toUpperCase()})
+								</label>
 								<textarea
 									value={option.text[currentLang]}
 									onChange={e => handleInputChange(e, index, 'text')}
@@ -154,7 +163,7 @@ export const BlogCreateModal = ({ close, open }) => {
 							</div>
 						</div>
 
-						<div className='flex flex-col '>
+						<div className='flex flex-col mt-[20px] '>
 							<label className='text-[18px] font-montserrat font-semibold text-[#000]'>
 								Изображение
 							</label>
@@ -188,42 +197,51 @@ export const BlogCreateModal = ({ close, open }) => {
 									onClick={() => handlePhotoUpload({ file: null }, index)}
 								/>
 							)}
+              	{blogData.option.length > 1 && (
+						<button
+							className='w-[30%] mt-[20px] text-center text-white100 font-medium text-[18px] py-[15px] px-[20px] bg-red-500 rounded-full ml-[10px]'
+							onClick={() => handleRemoveOption(index)}
+						>
+							Удалить опцию
+						</button>
+					)}
 						</div>
-
-						{blogData.option.length > 1 && (
-							<Button type='danger' onClick={() => handleRemoveOption(index)}>
-								Remove Option
-							</Button>
-						)}
 					</div>
 				))}
 
-				<div className='mb-4'>
-					<label>Related ID</label>
-					<Input
-						placeholder='Enter related IDs (e.g., 1, 2, 3)'
+				<div className='mb-4 flex flex-col gap-[8px]'>
+					<label className='text-[18px] font-montserrat font-semibold text-[#000]'>
+          похожие  (ID)
+					</label>
+					<input
+						placeholder='например (1 , 2 , 3 , .....)'
 						onChange={handleRelatedIdChange}
+						className='text-titleDark font-medium text-[18px] font-robotoFlex border border-[#F0F0F0]'
 					/>
 				</div>
 
-				<div></div>
-				<button
-					type='dashed'
-					onClick={handleAddOption}
-					className='w-[30%] mb-4'
-				>
-					Добавить Опции
-				</button>
+				<div className='mt-[20px] flex flex-row'>
+					<button
+						onClick={handleAddOption}
+						className='w-[30%] mb-4 text-center text-white100 font-medium text-[18px] py-[15px] px-[20px] bg-violet100 rounded-full'
+					>
+						Добавить Опции
+					</button>
 
-				{error && <p className='text-red-500'>{error}</p>}
+					{error && <p className='text-red-500'>{error}</p>}
 
-				<Button
-					htmlType='submit'
-					loading={loading}
-					className='w-full mt-4 py-2 px-4 bg-violet100 text-white'
-				>
-					{loading ? 'сохраняется' : 'Сохранить'}
-				</Button>
+				
+				</div>
+
+				<div className='flex items-center justify-end'>
+					<button
+						type='submit'
+						loading={loading}
+						className='w-[30%] font-bold rounded-full mt-4 py-[20px] px-[30px] font-montserrat bg-violet100 text-white'
+					>
+						{loading ? 'сохраняется' : 'Сохранить'}
+					</button>
+				</div>
 			</form>
 		</Modal>
 	)
