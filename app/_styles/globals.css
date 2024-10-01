@@ -22,7 +22,9 @@ input  , textarea{
 	padding: 0 !important;
 	height: 120px !important;
 }
-
+.ant-modal-close {
+	top: 30px !important;
+}
 input:focus  {
 	outline-color: #7B72EB;
 }

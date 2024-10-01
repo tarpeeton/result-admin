@@ -60,16 +60,7 @@ export const CaseCreateModal = ({ isCloseCreateModal, visible }) => {
     }));
   };
 
-  // Handle link and shortDescription changes
-  const handleBannerChange = (e, field) => {
-    setServiceData((prevState) => ({
-      ...prevState,
-      banner: {
-        ...prevState.banner,
-        [field]: e.target.value,
-      },
-    }));
-  };
+
 
   // Handle dynamic query input changes
   const handleQueryChange = (e, queryIndex, lang) => {
