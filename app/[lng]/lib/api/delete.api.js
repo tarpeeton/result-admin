@@ -1,9 +1,13 @@
 import axios from 'axios'
+import { BASE_URL } from '../../components/constants/ApiUrl'
+
+
+
 
 // GET ALL REVIEWS
 export const deleteMember = async id => {
 	try {
-		const res = await axios.delete(`http://213.230.91.55:8190/api/team/${id}`)
+		const res = await axios.delete(`${BASE_URL}/api/team/${id}`)
 
 		return res.data
 	} catch (error) {
@@ -13,7 +17,7 @@ export const deleteMember = async id => {
 }
 export const deleteImage = async id => {
 	try {
-		const res = await axios.delete(`http://213.230.91.55:8190/api/photo/${id}`)
+		const res = await axios.delete(`${BASE_URL}/api/photo/${id}`)
 
 		return res.data
 	} catch (error) {
@@ -23,7 +27,7 @@ export const deleteImage = async id => {
 }
 export const deleteCase = async id => {
 	try {
-		const res = await axios.delete(`http://213.230.91.55:8190/api/case/${id}`)
+		const res = await axios.delete(`${BASE_URL}/api/case/${id}`)
 
 		return res.data
 	} catch (error) {
@@ -31,5 +35,3 @@ export const deleteCase = async id => {
 		throw new Error(error)
 	}
 }
-
-

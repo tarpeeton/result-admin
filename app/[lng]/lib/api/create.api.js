@@ -1,10 +1,11 @@
-// api/createReview.js
 import axios from 'axios'
+import { BASE_URL } from '../../components/constants/ApiUrl'
+
 
 export const createReview = async reviewData => {
 	try {
 		const response = await axios.post(
-			'http://213.230.91.55:8190/api/review',
+			`${BASE_URL}/api/review`,
 			reviewData,
 			{
 				headers: {
@@ -22,7 +23,7 @@ export const createReview = async reviewData => {
 export const createService = async serviceData => {
 	try {
 		const response = await axios.post(
-			'http://213.230.91.55:8190/api/service',
+			`${BASE_URL}/api/service`,
 			serviceData,
 			{
 				headers: {
@@ -39,7 +40,7 @@ export const createService = async serviceData => {
 export const createCase = async serviceData => {
 	try {
 		const response = await axios.post(
-			'http://213.230.91.55:8190/api/case',
+			`${BASE_URL}/api/case`,
 			serviceData,
 			{
 				headers: {
@@ -57,7 +58,7 @@ export const createPartner = async formData => {
 	try {
 		const response = await axios.post(
 			// 'http://213.230.91.55:8190/api/partner/create',
-			'http://13.61.1.182:8190/api/partner/create',
+			`${BASE_URL}/api/partner/create`,
 			formData,
 			{
 				headers: {
@@ -74,7 +75,7 @@ export const createPartner = async formData => {
 export const createProject = async formData => {
 	try {
 		const response = await axios.post(
-			'http://213.230.91.55:8190/api/project',
+			`${BASE_URL}/api/project`,
 			formData,
 			{
 				headers: {
@@ -91,7 +92,7 @@ export const createProject = async formData => {
 export const createMembers = async formData => {
 	try {
 		const response = await axios.post(
-			'http://13.61.1.182:8190/api/team',
+			`${BASE_URL}/api/team`,
 			formData,
 			{
 				headers: {
@@ -108,10 +109,9 @@ export const createMembers = async formData => {
 
 
 export const createImage = async formData => {
-	console.log("FORM DARAAAA" , formData) 
 	try {
 		const response = await axios.post(
-			'http://213.230.91.55:8190/api/photo', // URL from your screenshot
+			`${BASE_URL}/api/photo`, // URL from your screenshot
 			formData,
 			
 		)
@@ -126,7 +126,7 @@ export const createImage = async formData => {
 export const createBlog = async (formData) => {
 	try {
 	  const response = await axios.post(
-		'http://213.230.91.55:8190/api/blog',
+		`${BASE_URL}/api/blog`,
 		formData,
 		{
 		  headers: {

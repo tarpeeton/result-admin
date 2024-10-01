@@ -1,13 +1,14 @@
 import axios from 'axios'
+import { BASE_URL } from '../../components/constants/ApiUrl'
 
 // GET ALL REVIEWS
 export const getReviewsAll = async () => {
 	try {
-		const res = await axios.get('http://213.230.91.55:8190/api/review', {
+		const res = await axios.get(`${BASE_URL}/api/review`, {
 			// Set the Accept-Language header to the language of the reviews
 			headers: {
-				'Accept-Language': '-' // Use wildcard to request all languages
-			  },
+				'Accept-Language': '-', // Use wildcard to request all languages
+			},
 		})
 
 		return res.data
@@ -16,13 +17,13 @@ export const getReviewsAll = async () => {
 		throw new Error(error)
 	}
 }
-export const getAllBlogs = async (lng) => {
+export const getAllBlogs = async lng => {
 	try {
-		const res = await axios.get('http://213.230.91.55:8190/api/blog/all', {
+		const res = await axios.get(`${BASE_URL}/api/blog/all`, {
 			// Set the Accept-Language header to the language of the reviews
 			headers: {
-				'Accept-Language': `${lng}` // Use wildcard to request all languages
-			  },
+				'Accept-Language': `${lng}`, // Use wildcard to request all languages
+			},
 		})
 
 		return res.data
@@ -32,39 +33,24 @@ export const getAllBlogs = async (lng) => {
 	}
 }
 
-export const getBlogWithSlug = async (slug) => {
+export const getBlogWithSlug = async slug => {
 	try {
-	  const res = await axios.get(`http://213.230.91.55:8190/api/blog/${slug}`, {
-		headers: {
-		  'Accept-Language': '-' // Use wildcard to request all languages
-		},
-	  }).catch((error) => {
-		console.error("Error for fetching blogsx", error)
-	  });
-  
-	  return res.data;
+		const res = await axios
+			.get(`${BASE_URL}/api/blog/${slug}`, {
+				headers: {
+					'Accept-Language': '-', // Use wildcard to request all languages
+				},
+			})
+			.catch(error => {
+				console.error('Error for fetching blogsx', error)
+			})
+
+		return res.data
 	} catch (error) {
-	  // Throw an error if the request fails
-	  throw new Error(error.message || 'Failed to fetch blog data');
+		// Throw an error if the request fails
+		throw new Error(error.message || 'Failed to fetch blog data')
 	}
-  };
-// GET REVIEW WITH ID
-
-// GET MAIN BANNER
-
-// export const getMainBanner = async (lng) => {
-// 	try {
-// 	  const res = await axios.get('/api/main-banner', {
-// 		headers: {
-// 		  "Accept-Language": lng
-// 		}
-// 	  });
-// 	  // Return only the 'data' part of the response
-// 	  return res.data.data;
-// 	} catch (error) {
-// 	  throw new Error(error);
-// 	}
-//   };
+}
 
 export const getMainBanner = async lng => {
 	// Return fake data for testing
@@ -89,7 +75,7 @@ export const getMainBanner = async lng => {
 
 export const getAllMembers = async lng => {
 	try {
-		const res = await axios.get('http://13.61.1.182:8190/api/team/all', {
+		const res = await axios.get(`${BASE_URL}/api/team/all`, {
 			// Set the Accept-Language header to the language of the reviews
 			headers: {
 				'Accept-Language': '-',
@@ -102,57 +88,46 @@ export const getAllMembers = async lng => {
 		console.log(error.message)
 	}
 }
-export const getSingleMember = async (memberID) => {
+export const getSingleMember = async memberID => {
 	try {
-		const res = await axios.get(
-			`http://13.61.1.182:8190/api/team/${memberID}`, 
-			{
-				headers: {
-					'Accept-Language': '-' // Set the supported language
-				}
-			}
-		);
-		return res.data.data;
+		const res = await axios.get(`${BASE_URL}/api/team/${memberID}`, {
+			headers: {
+				'Accept-Language': '-', // Set the supported language
+			},
+		})
+		return res.data.data
 	} catch (error) {
 		// Log the error message
-		console.log(error.message);
-		return null;
+		console.log(error.message)
+		return null
 	}
-};
-export const getSingleCase = async (ID) => {
-	
+}
+export const getSingleCase = async ID => {
 	try {
-		const res = await axios.get(
-			`http://213.230.91.55:8190/api/case/${ID}`, 
-			{
-				headers: {
-					'Accept-Language': '-' // Set the supported language
-				}
-			}
-		);
-		return res.data.data;
+		const res = await axios.get(`${BASE_URL}/api/case/${ID}`, {
+			headers: {
+				'Accept-Language': '-', // Set the supported language
+			},
+		})
+		return res.data.data
 	} catch (error) {
 		// Log the error message
-		console.log(error.message);
-		return null;
+		console.log(error.message)
+		return null
 	}
-};
-export const getAllCases = async (typeID , lng) => {
+}
+export const getAllCases = async (typeID, lng) => {
 	try {
-	  const res = await axios.get(
-		`http://213.230.91.55:8190/api/case/all`,
-		{
-		  headers: {
-			"Accept-Language": lng, // Set the supported language
-		  },
-		  params: typeID ? { "type-id": typeID } : {}, // Only pass typeID if it's not null
-		}
-	  );
-	  return res.data.data;
+		const res = await axios.get(`${BASE_URL}/api/case/all`, {
+			headers: {
+				'Accept-Language': lng, // Set the supported language
+			},
+			params: typeID ? { 'type-id': typeID } : {}, // Only pass typeID if it's not null
+		})
+		return res.data.data
 	} catch (error) {
-	  // Log the error message
-	  console.log(error.message);
-	  return null;
+		// Log the error message
+		console.log(error.message)
+		return null
 	}
-  };
-  
+}

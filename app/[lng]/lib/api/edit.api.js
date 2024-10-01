@@ -1,9 +1,12 @@
 import axios from 'axios';
+import { BASE_URL } from '../../components/constants/ApiUrl';
+
+
 
 // Update member information
 export const editMember = async (jsonData) => {
   try {
-    const res = await axios.put(`http://213.230.91.55:8190/api/team`, jsonData); // Pass jsonData directly
+    const res = await axios.put(`${BASE_URL}/api/team`, jsonData); // Pass jsonData directly
     return res.data;
   } catch (error) {
     // Handle the error
@@ -12,7 +15,7 @@ export const editMember = async (jsonData) => {
 };
 export const editImage = async (id ,photoData) => {
   try {
-    const res = await axios.put(`http://213.230.91.55:8190/api/photo/${id}`, photoData); // Pass jsonData directly
+    const res = await axios.put(`${BASE_URL}/api/photo/${id}`, photoData); // Pass jsonData directly
     return res.data;
   } catch (error) {
     // Handle the error
@@ -22,10 +25,9 @@ export const editImage = async (id ,photoData) => {
 
 
 export const updateBlog = async (jsonData) => {
-  console.log(jsonData , "JSON DATA");
   try {
     const res = await axios.put(
-      `http://213.230.91.55:8190/api/blog`, 
+      `${BASE_URL}/api/blog`, 
       JSON.stringify(jsonData),  // Convert the JSON object to a string
       {
         headers: {
