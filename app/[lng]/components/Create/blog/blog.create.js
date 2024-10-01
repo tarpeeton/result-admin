@@ -5,7 +5,7 @@ import { MdDeleteForever } from "react-icons/md";
 import { createBlog } from "../../../lib/api/create.api";
 import toastr from "toastr";
 import "toastr/build/toastr.min.css";
-
+import { lang } from '../../constants/langugaes';
 export const BlogCreateModal = ({ close, open }) => {
   const [currentLang, setCurrentLang] = useState("ru");
   const [loading, setLoading] = useState(false);
@@ -89,7 +89,7 @@ export const BlogCreateModal = ({ close, open }) => {
     <Modal title="Create Blog" open={open} onCancel={close} footer={null} width={800}>
       <form onSubmit={handleSubmit}>
         <div className="language-switcher flex gap-2 mb-4">
-          {["ru", "uz", "en"].map((lang) => (
+          {lang.map((lang) => (
             <button
               key={lang}
               type="button"
@@ -103,8 +103,8 @@ export const BlogCreateModal = ({ close, open }) => {
 
         {blogData.option.map((option, index) => (
           <div key={index} className="option-block mb-4 p-4 border rounded-lg">
-            <div className="flex gap-4 mb-2">
-              <div className="flex-1">
+            <div className="flex gap-4 mb-2 flex-col">
+              <div>
                 <label>Title ({currentLang.toUpperCase()})</label>
                 <Input
                   value={option.title[currentLang]}
@@ -113,7 +113,7 @@ export const BlogCreateModal = ({ close, open }) => {
                 />
               </div>
 
-              <div className="flex-1">
+              <div >
                 <label>Text ({currentLang.toUpperCase()})</label>
                 <Input.TextArea
                   value={option.text[currentLang]}
@@ -157,13 +157,16 @@ export const BlogCreateModal = ({ close, open }) => {
         ))}
 
         <div className="mb-4">
-          <label>Related IDs (comma-separated)</label>
+          <label>Related ID</label>
           <Input
             placeholder="Enter related IDs (e.g., 1, 2, 3)"
             onChange={handleRelatedIdChange}
           />
         </div>
 
+<div>
+
+</div>
         <Button type="dashed" onClick={handleAddOption} className="w-full mb-4">
           <FiPlus /> Add Option
         </Button>

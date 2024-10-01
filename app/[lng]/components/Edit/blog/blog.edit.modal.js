@@ -1,12 +1,13 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { Modal, Upload, Button } from 'antd';
+import { Modal, Upload } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import toastr from 'toastr';
 import 'toastr/build/toastr.min.css';
 import { updateBlog, editImage } from '@/app/[lng]/lib/api/edit.api';
 import { useRouter } from 'next/navigation';
 import { IoClose } from 'react-icons/io5';
+import { createImage } from '@/app/[lng]/lib/api/create.api';
 
 export const EditBlog = ({
     isCloseCreateModal,

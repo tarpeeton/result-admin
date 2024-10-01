@@ -16,6 +16,21 @@ export const getReviewsAll = async () => {
 		throw new Error(error)
 	}
 }
+export const getAllBlogs = async (lng) => {
+	try {
+		const res = await axios.get('http://213.230.91.55:8190/api/blog/all', {
+			// Set the Accept-Language header to the language of the reviews
+			headers: {
+				'Accept-Language': `${lng}` // Use wildcard to request all languages
+			  },
+		})
+
+		return res.data
+	} catch (error) {
+		// Throw an error if the request fails
+		throw new Error(error)
+	}
+}
 
 export const getBlogWithSlug = async (slug) => {
 	try {

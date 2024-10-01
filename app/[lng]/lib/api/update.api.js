@@ -42,3 +42,4 @@ export const updateBannerImage = async (id, image) => {
     throw new Error(error);
   }
 };
+
