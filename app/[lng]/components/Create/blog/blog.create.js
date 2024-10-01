@@ -15,7 +15,7 @@ export const BlogCreateModal = ({ close, open, setNewBlogMultiple }) => {
 		option: [
 			{
 				title: { uz: '', ru: '', en: '' },
-				text: { uz: '', ru: '', en: '' }, // Using 'text' instead of 'description'
+				text: { uz: '', ru: '', en: '' }, 
 				photo: null,
 				orderNum: 0,
 			},
@@ -69,10 +69,10 @@ export const BlogCreateModal = ({ close, open, setNewBlogMultiple }) => {
 
 		try {
 			await setNewBlogMultiple(blogData)
-			toastr.success('Blog created successfully')
+			toastr.success('Блог успешно создан')
 			close()
 		} catch (error) {
-			toastr.error('Error creating blog')
+			toastr.error('Ошибка создания блога')
 			setError(error.message)
 		} finally {
 			setLoading(false)

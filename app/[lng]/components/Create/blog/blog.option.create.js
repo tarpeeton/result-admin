@@ -5,9 +5,8 @@ import { updateBlog } from '@/app/[lng]/lib/api/edit.api'
 import toastr from 'toastr'
 import 'toastr/build/toastr.min.css'
 import { createImage } from '@/app/[lng]/lib/api/create.api'
-import { IoClose } from "react-icons/io5";
-import { IoIosAddCircleOutline } from "react-icons/io";
-
+import { IoClose } from 'react-icons/io5'
+import { IoIosAddCircleOutline } from 'react-icons/io'
 
 export const BlogOptionCreate = ({ close, open, blogID }) => {
   const [currentLang, setCurrentLang] = useState('ru')
@@ -18,7 +17,6 @@ export const BlogOptionCreate = ({ close, open, blogID }) => {
       {
         title: { uz: '', ru: '', en: '' },
         description: { uz: '', ru: '', en: '' },
-        photo: {},
         orderNum: 0,
       },
     ],
@@ -35,13 +33,13 @@ export const BlogOptionCreate = ({ close, open, blogID }) => {
     if (info.file) {
       try {
         const formData = new FormData()
-        formData.append('photo', info.file.originFileObj || info.file) // Append file
+        formData.append('photo', info.file.originFileObj || info.file)
 
-        const response = await createImage(formData) // Upload image to server
-        
+        const response = await createImage(formData)
+
         updatedOption[index].photo = {
-          id: response.data[0].id,  // Extract `id` from response
-          url: response.data[0].url // Extract `url` from response
+          id: response.data[0].id,
+          url: response.data[0].url,
         }
 
         setBlogData({ ...blogData, option: updatedOption })
@@ -61,8 +59,7 @@ export const BlogOptionCreate = ({ close, open, blogID }) => {
         {
           title: { uz: '', ru: '', en: '' },
           description: { uz: '', ru: '', en: '' },
-          photo: {},
-          orderNum: 0,
+          orderNum: prevData.option.length,
         },
       ],
     }))
@@ -87,16 +84,13 @@ export const BlogOptionCreate = ({ close, open, blogID }) => {
           title: option.title,
           description: option.description,
           orderNum: index,
-          photo: {
-            id: option.photo.id,
-            url: option.photo.url,
-          },
+          ...(option.photo ? { photo: option.photo } : {}),
         })),
       }
 
-      await updateBlog(jsonData) // Send JSON data with photo ids and urls
+      await updateBlog(jsonData)
       toastr.success('Blog created successfully')
-      close() // Close modal after success
+      close()
     } catch (error) {
       toastr.error('Error creating blog')
       setError(error.message)
@@ -108,12 +102,12 @@ export const BlogOptionCreate = ({ close, open, blogID }) => {
 
   return (
     <Modal
-	  title={<span className="text-[30px] font-bold">Создать новую опцию</span>}
+      title={<span className="text-[30px] font-bold">Создать новую опцию</span>}
       open={open}
       onCancel={close}
       footer={null}
       width={1200}
-	  closeIcon={<IoClose size={30}/>}
+      closeIcon={<IoClose size={30} />}
     >
       <form onSubmit={handleSubmit}>
         <div className='language-switcher flex gap-2 mb-4 mt-[30px]'>
@@ -151,16 +145,16 @@ export const BlogOptionCreate = ({ close, open, blogID }) => {
                   Текст ({currentLang.toUpperCase()})
                 </label>
                 <textarea
-                       value={option.description[currentLang]}
-                       onChange={(e) => handleInputChange(e, index, 'description')}
-                        required
-                        className='p-[20px] text-titleDark font-robotoFlex font-medium text-[18px] border border-[#F0F0F0] outline-violet100 min-h-[150px] mt-[10px]'
-                    />
+                  value={option.description[currentLang]}
+                  onChange={(e) => handleInputChange(e, index, 'description')}
+                  required
+                  className='p-[20px] text-titleDark font-robotoFlex font-medium text-[18px] border border-[#F0F0F0] outline-violet100 min-h-[150px] mt-[10px]'
+                />
               </div>
             </div>
 
             <div className='flex flex-col border border-[#F0F0F0] rounded-[20px] gap-2 p-[20px] w-[50%] mt-[30px]'>
-            <label htmlFor='photo' className='text-[18px] font-montserrat font-semibold text-[#000]'>Изображение</label>
+              <label htmlFor='photo' className='text-[18px] font-montserrat font-semibold text-[#000]'>Изображение</label>
               <div className='relative mt-[20px]'>
                 <Upload
                   name='photo'
@@ -169,7 +163,7 @@ export const BlogOptionCreate = ({ close, open, blogID }) => {
                   onChange={(info) => handlePhotoUpload(info, index)}
                   showUploadList={false}
                 >
-                  {option.photo.url ? (
+                  {option.photo && option.photo.url ? (
                     <img
                       src={option.photo.url}
                       alt='option'
@@ -181,13 +175,13 @@ export const BlogOptionCreate = ({ close, open, blogID }) => {
                     </div>
                   )}
                 </Upload>
-                {option.photo.url && (
+                {option.photo && option.photo.url && (
                   <MdDeleteForever
                     size={24}
                     className='text-red-600 cursor-pointer absolute top-[20px] left-[25px]'
                     onClick={() => {
                       const updatedOption = [...blogData.option]
-                      updatedOption[index].photo = {}
+                      delete updatedOption[index].photo
                       setBlogData({ ...blogData, option: updatedOption })
                     }}
                   />

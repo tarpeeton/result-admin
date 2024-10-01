@@ -35,3 +35,13 @@ export const deleteCase = async id => {
 		throw new Error(error)
 	}
 }
+export const deleteBlog = async id => {
+	try {
+		const res = await axios.delete(`${BASE_URL}/api/blog/${id}`)
+
+		return res.data
+	} catch (error) {
+		// Throw an error if the request fails
+		throw new Error(error)
+	}
+}
