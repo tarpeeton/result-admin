@@ -1,16 +1,22 @@
 "use client";
-import { useState } from "react";
-import { Modal, Input, Button, Upload } from "antd";
-import { FiPlus } from "react-icons/fi";
-import { MdDeleteForever } from "react-icons/md"; // Icon for delete button
+import React, { useState } from "react";
+import { useRouter } from 'next/navigation';
+import { Modal, Button, Upload } from "antd";
 import { createCase } from "../../lib/api/create.api";
+
+import { MdDeleteForever } from "react-icons/md"; // O'chirish tugmasi uchun ikonka
 import toastr from "toastr";
-import "toastr/build/toastr.min.css"; // Toastr CSS for notifications
+import "toastr/build/toastr.min.css"; // Toastr uchun CSS
+import { IoClose } from "react-icons/io5";
+import { IoIosAddCircleOutline } from 'react-icons/io'
+import { MdDelete } from "react-icons/md";
 
-export const CaseCreateModal = ({ isCloseCreateModal, visible }) => {
-  const [currentLang, setCurrentLang] = useState("ru"); // State for the current selected language
 
-  // Initial state for the service data
+export const CaseCreateModal = ({ isCloseCreateModal, visible, onCreateSuccess }) => {
+  const [currentLang, setCurrentLang] = useState("ru"); // Hozirgi tanlangan til uchun holat
+  const router = useRouter();
+
+  // Dastlabki holat
   const [serviceData, setServiceData] = useState({
     banner: {
       title: { uz: "", ru: "", en: "" },
@@ -34,12 +40,12 @@ export const CaseCreateModal = ({ isCloseCreateModal, visible }) => {
       },
     ],
     resultDescription: { uz: "", ru: "", en: "" },
-    type: [{ id: 1 }], // Initial type with id 1
+    type: [{ id: 1 }], // Dastlabki typeID 1
     bannerBackground: null,
     bannerPhoto: null,
-    resultSiteLink: '', // Single language field
-    resultInstagramLink: '', // Single language field
-    resultTelegramLink: '', // Single language field
+    resultSiteLink: '', // Bir tildagi maydon
+    resultInstagramLink: '', // Bir tildagi maydon
+    resultTelegramLink: '', // Bir tildagi maydon
     slider: [],
     orderNum: 1,
     active: true,
@@ -49,7 +55,7 @@ export const CaseCreateModal = ({ isCloseCreateModal, visible }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Handle input changes for nested fields based on the current language
+  // Hozirgi tilga asoslangan maydonlarni boshqarish
   const handleChange = (e, field) => {
     setServiceData((prevState) => ({
       ...prevState,
@@ -60,16 +66,13 @@ export const CaseCreateModal = ({ isCloseCreateModal, visible }) => {
     }));
   };
 
-
-
-  // Handle dynamic query input changes
+  // Querylarni boshqarish
   const handleQueryChange = (e, queryIndex, lang) => {
     const newQuery = [...serviceData.query];
     newQuery[queryIndex][lang] = e.target.value;
     setServiceData({ ...serviceData, query: newQuery });
   };
 
-  // Add a new query block
   const handleAddQuery = () => {
     setServiceData((prevData) => ({
       ...prevData,
@@ -77,20 +80,18 @@ export const CaseCreateModal = ({ isCloseCreateModal, visible }) => {
     }));
   };
 
-  // Remove a query block
   const handleRemoveQuery = (queryIndex) => {
     const newQuery = serviceData.query.filter((_, index) => index !== queryIndex);
     setServiceData({ ...serviceData, query: newQuery });
   };
 
-  // Handle dynamic providedService input changes
+  // providedService boshqarish
   const handleProvidedServiceChange = (e, index, lang, field) => {
     const updatedServices = [...serviceData.providedService];
     updatedServices[index][field][lang] = e.target.value;
     setServiceData({ ...serviceData, providedService: updatedServices });
   };
 
-  // Add a new providedService block
   const handleAddProvidedService = () => {
     setServiceData((prevData) => ({
       ...prevData,
@@ -101,14 +102,13 @@ export const CaseCreateModal = ({ isCloseCreateModal, visible }) => {
     }));
   };
 
-  // Handle dynamic obtainedResult input changes
+  // obtainedResult boshqarish
   const handleObtainedResultChange = (e, index, lang, field) => {
     const updatedResults = [...serviceData.obtainedResult];
     updatedResults[index][field][lang] = e.target.value;
     setServiceData({ ...serviceData, obtainedResult: updatedResults });
   };
 
-  // Add a new obtainedResult block
   const handleAddObtainedResult = () => {
     setServiceData((prevData) => ({
       ...prevData,
@@ -119,14 +119,13 @@ export const CaseCreateModal = ({ isCloseCreateModal, visible }) => {
     }));
   };
 
-  // Handle dynamic type input changes
+  // Type boshqarish
   const handleTypeChange = (e, index) => {
     const updatedTypes = [...serviceData.type];
     updatedTypes[index].id = e.target.value;
     setServiceData({ ...serviceData, type: updatedTypes });
   };
 
-  // Add a new type block
   const handleAddType = () => {
     setServiceData((prevData) => ({
       ...prevData,
@@ -134,13 +133,12 @@ export const CaseCreateModal = ({ isCloseCreateModal, visible }) => {
     }));
   };
 
-  // Remove a type block
   const handleRemoveType = (index) => {
     const updatedTypes = serviceData.type.filter((_, i) => i !== index);
     setServiceData({ ...serviceData, type: updatedTypes });
   };
 
-  // Handle file uploads for single files
+  // Fayllarni yuklash
   const handleFileUpload = ({ file }, field) => {
     setServiceData((prevData) => ({
       ...prevData,
@@ -148,7 +146,6 @@ export const CaseCreateModal = ({ isCloseCreateModal, visible }) => {
     }));
   };
 
-  // Handle removing uploaded files
   const handleFileRemove = (field) => {
     setServiceData((prevData) => ({
       ...prevData,
@@ -156,7 +153,6 @@ export const CaseCreateModal = ({ isCloseCreateModal, visible }) => {
     }));
   };
 
-  // Handle multiple file uploads for slider
   const handleSliderUpload = ({ fileList }) => {
     setServiceData((prevData) => ({
       ...prevData,
@@ -164,7 +160,6 @@ export const CaseCreateModal = ({ isCloseCreateModal, visible }) => {
     }));
   };
 
-  // Handle removing files from the slider
   const handleSliderRemove = (file) => {
     const updatedSlider = serviceData.slider.filter(
       (item) => item.uid !== file.uid
@@ -175,7 +170,7 @@ export const CaseCreateModal = ({ isCloseCreateModal, visible }) => {
     }));
   };
 
-  // Handle form submission
+  // Formani yuborish
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -202,7 +197,7 @@ export const CaseCreateModal = ({ isCloseCreateModal, visible }) => {
     const formData = new FormData();
     formData.append("json", JSON.stringify(jsonData));
 
-    // Append files if available
+    // Fayllarni qo'shish
     if (serviceData.bannerPhoto) {
       formData.append("banner-photo", serviceData.bannerPhoto);
     }
@@ -216,9 +211,10 @@ export const CaseCreateModal = ({ isCloseCreateModal, visible }) => {
     }
 
     try {
-      await createCase(formData); // Assuming createCase is the API call function
-      toastr.success("Сервис успешно создан!");
+      await createCase(formData); // createCase API chaqiruvi
+      toastr.success("КЕЙС успешно создан!");
       isCloseCreateModal();
+      onCreateSuccess(); // Ma'lumotlarni yangilash funksiyasini chaqiramiz
     } catch (error) {
       toastr.error(error.message);
     } finally {
@@ -228,20 +224,23 @@ export const CaseCreateModal = ({ isCloseCreateModal, visible }) => {
 
   return (
     <Modal
-      title={<span className="text-[18px] font-bold">Создать CASE</span>}
+      title={<span className="text-[30px] font-bold">Создать CASE</span>}
       visible={visible}
       onCancel={isCloseCreateModal}
       footer={null}
       width={800}
+      closeIcon={<IoClose size={30} className='text-titleDark'/>}
     >
-      <form>
-        {/* Custom Language Switcher */}
+      <form className='mt-[30px]'>
+        {/* Tilni almashtirish */}
         <div className="flex gap-2 mb-4">
           {["ru", "uz", "en"].map((lang) => (
             <button
               key={lang}
               type="button"
-              className={`px-4 py-2 rounded-lg ${currentLang === lang ? "bg-violet100 text-white" : "bg-gray-200"}`}
+              className={`px-4 py-2 rounded-lg ${
+                currentLang === lang ? "bg-violet100 text-white" : "bg-gray-200"
+              }`}
               onClick={() => setCurrentLang(lang)}
             >
               {lang.toUpperCase()}
@@ -249,33 +248,36 @@ export const CaseCreateModal = ({ isCloseCreateModal, visible }) => {
           ))}
         </div>
 
-        {/* Banner Fields */}
+        {/* Banner maydonlari */}
         <div className="flex flex-col gap-[10px]">
-          <label>Название баннера ({currentLang.toUpperCase()})</label>
-          <Input
+          <label className='editLabelModal'>Название баннера ({currentLang.toUpperCase()})</label>
+          <input
             value={serviceData.banner.title[currentLang]}
             onChange={(e) => handleChange(e, "title")}
             required
+            className='input_modal'
           />
 
-          <label>Краткое описание ({currentLang.toUpperCase()})</label>
-          <Input
+          <label className='editLabelModal'>Краткое описание ({currentLang.toUpperCase()})</label>
+          <input
             value={serviceData.banner.shortDescription[currentLang]}
             onChange={(e) => handleChange(e, "shortDescription")}
             required
+            className='input_modal'
           />
         </div>
 
-        {/* Dynamic Query Section */}
+        {/* Query bo'limi */}
         <div className="mt-4">
           <h3 className="font-bold text-[18px]">Запросы</h3>
           {serviceData.query.map((query, index) => (
             <div key={index} className="flex flex-col gap-[10px] mt-4">
-              <label>Запрос ({currentLang.toUpperCase()})</label>
-              <Input
+              <label className='editLabelModal'>Запрос ({currentLang.toUpperCase()})</label>
+              <input
                 value={query[currentLang]}
                 onChange={(e) => handleQueryChange(e, index, currentLang)}
                 required
+                className='input_modal'
               />
               <Button type="danger" onClick={() => handleRemoveQuery(index)} className="mt-2">
                 Удалить Запрос
@@ -287,9 +289,9 @@ export const CaseCreateModal = ({ isCloseCreateModal, visible }) => {
           </Button>
         </div>
 
-        <div className="mt-4">
-          <label>Описание Запроса ({currentLang.toUpperCase()})</label>
-          <Input.TextArea
+        <div className="mt-4 flex flex-col">
+          <label className='editLabelModal'>Описание Запроса ({currentLang.toUpperCase()})</label>
+          <textarea
             value={serviceData.queryDescription[currentLang]}
             onChange={(e) =>
               setServiceData((prevState) => ({
@@ -301,25 +303,28 @@ export const CaseCreateModal = ({ isCloseCreateModal, visible }) => {
               }))
             }
             required
+            className='input_modal'
           />
         </div>
 
-        {/* Provided Services Section */}
+        {/* Provided Services bo'limi */}
         <div className="mt-4">
           <h3 className="font-bold text-[18px]">Предоставленные Услуги</h3>
           {serviceData.providedService.map((service, index) => (
             <div key={index} className="flex flex-col gap-[10px] mt-4">
-              <label>Название ({currentLang.toUpperCase()})</label>
-              <Input
+              <label className='editLabelModal'>Название ({currentLang.toUpperCase()})</label>
+              <input
                 value={service.name[currentLang]}
                 onChange={(e) => handleProvidedServiceChange(e, index, currentLang, "name")}
                 required
+                className='input_modal'
               />
-              <label>Описание ({currentLang.toUpperCase()})</label>
-              <Input.TextArea
+              <label className='editLabelModal'>Описание ({currentLang.toUpperCase()})</label>
+              <textarea
                 value={service.description[currentLang]}
                 onChange={(e) => handleProvidedServiceChange(e, index, currentLang, "description")}
                 required
+                className='input_modal'
               />
             </div>
           ))}
@@ -328,22 +333,24 @@ export const CaseCreateModal = ({ isCloseCreateModal, visible }) => {
           </Button>
         </div>
 
-        {/* Obtained Result Section */}
+        {/* Obtained Result bo'limi */}
         <div className="mt-4">
           <h3 className="font-bold text-[18px]">Полученные Результаты</h3>
           {serviceData.obtainedResult.map((result, index) => (
             <div key={index} className="flex flex-col gap-[10px] mt-4">
-              <label>Название ({currentLang.toUpperCase()})</label>
-              <Input
+              <label className='editLabelModal'>Название ({currentLang.toUpperCase()})</label>
+              <input
                 value={result.name[currentLang]}
                 onChange={(e) => handleObtainedResultChange(e, index, currentLang, "name")}
                 required
+                className='input_modal'
               />
-              <label>Результат ({currentLang.toUpperCase()})</label>
-              <Input.TextArea
+              <label className='editLabelModal'>Результат ({currentLang.toUpperCase()})</label>
+              <textarea
                 value={result.result[currentLang]}
                 onChange={(e) => handleObtainedResultChange(e, index, currentLang, "result")}
                 required
+                className='input_modal'
               />
             </div>
           ))}
@@ -352,9 +359,9 @@ export const CaseCreateModal = ({ isCloseCreateModal, visible }) => {
           </Button>
         </div>
 
-        <div className="mt-4">
-          <label>Описание Результата ({currentLang.toUpperCase()})</label>
-          <Input.TextArea
+        <div className="mt-4 flex flex-col">
+          <label className='editLabelModal'>Описание Результата ({currentLang.toUpperCase()})</label>
+          <textarea
             value={serviceData.resultDescription[currentLang]}
             onChange={(e) =>
               setServiceData((prevState) => ({
@@ -366,22 +373,24 @@ export const CaseCreateModal = ({ isCloseCreateModal, visible }) => {
               }))
             }
             required
+            className='input_modal'
           />
         </div>
 
-        {/* Type Section */}
+        {/* Type bo'limi */}
         <div className="mt-4">
           <h3 className="font-bold text-[18px]">Типы</h3>
           {serviceData.type.map((type, index) => (
             <div key={index} className="flex items-center gap-[10px] mt-4">
-              <Input
+              <input
                 placeholder="Введите ID типа"
                 value={type.id}
                 onChange={(e) => handleTypeChange(e, index)}
                 required
+                className='input_modal w-[95%]'
               />
               <Button type="danger" onClick={() => handleRemoveType(index)}>
-                Удалить Тип
+                <MdDelete  size={30} className='text-red-500'/>
               </Button>
             </div>
           ))}
@@ -390,9 +399,9 @@ export const CaseCreateModal = ({ isCloseCreateModal, visible }) => {
           </Button>
         </div>
 
-        {/* File Upload Section */}
+        {/* Fayl yuklash bo'limi */}
         <div className="flex flex-row gap-[10px] mt-4">
-          {/* Banner Photo Upload */}
+          {/* Banner Photo yuklash */}
           <div className="flex flex-col gap-[10px] relative">
             <label className="font-bold text-[18px]">Фото баннера</label>
             <Upload
@@ -401,13 +410,13 @@ export const CaseCreateModal = ({ isCloseCreateModal, visible }) => {
               showUploadList={false}
               beforeUpload={() => false}
               onChange={(info) => handleFileUpload(info, "bannerPhoto")}
-              onRemove={() => handleFileRemove("bannerPhoto")} // Add file removal functionality
+              onRemove={() => handleFileRemove("bannerPhoto")}
             >
               {serviceData.bannerPhoto ? (
                 <img src={URL.createObjectURL(serviceData.bannerPhoto)} alt="bannerPhoto" style={{ width: "100%" }} />
               ) : (
                 <div className="w-[40px] h-[40px] flex items-center justify-center">
-                  <FiPlus className="text-violet100 w-full h-full" />
+                  <IoIosAddCircleOutline className="text-violet100" size={50} />
                 </div>
               )}
             </Upload>
@@ -420,9 +429,7 @@ export const CaseCreateModal = ({ isCloseCreateModal, visible }) => {
             )}
           </div>
 
-         
-
-          {/* Banner Background Upload */}
+          {/* Banner Background yuklash */}
           <div className="flex flex-col gap-[10px] relative">
             <label className="font-bold text-[18px]">Фон баннера</label>
             <Upload
@@ -431,13 +438,13 @@ export const CaseCreateModal = ({ isCloseCreateModal, visible }) => {
               showUploadList={false}
               beforeUpload={() => false}
               onChange={(info) => handleFileUpload(info, "bannerBackground")}
-              onRemove={() => handleFileRemove("bannerBackground")} // Add file removal functionality
+              onRemove={() => handleFileRemove("bannerBackground")}
             >
               {serviceData.bannerBackground ? (
                 <img src={URL.createObjectURL(serviceData.bannerBackground)} alt="bannerBackground" style={{ width: "100%" }} />
               ) : (
                 <div className="w-[40px] h-[40px] flex items-center justify-center">
-                  <FiPlus className="text-violet100 w-full h-full" />
+                   <IoIosAddCircleOutline className="text-violet100" size={50} />
                 </div>
               )}
             </Upload>
@@ -451,7 +458,7 @@ export const CaseCreateModal = ({ isCloseCreateModal, visible }) => {
           </div>
         </div>
 
-        {/* Slider Multiple Upload */}
+        {/* Slider uchun ko'p fayl yuklash */}
         <div className="flex flex-col gap-[10px] mt-4">
           <label className="font-bold text-[18px]">Слайдер (множество файлов)</label>
           <Upload
@@ -460,46 +467,49 @@ export const CaseCreateModal = ({ isCloseCreateModal, visible }) => {
             listType="picture-card"
             beforeUpload={() => false}
             onChange={(info) => handleSliderUpload(info)}
-            onRemove={handleSliderRemove} // Add file removal functionality
+            onRemove={handleSliderRemove}
           >
             <div className="w-[40px] h-[40px] flex items-center justify-center">
-              <FiPlus className="text-violet100 w-full h-full" />
+              <IoIosAddCircleOutline className="text-violet100" size={50} />
             </div>
           </Upload>
         </div>
 
-        {/* New fields for site, Instagram, and Telegram links */}
-        <div className="mt-4">
-          <label>Ссылка на сайт</label>
-          <Input
+        {/* Sayt, Instagram va Telegram linklari */}
+        <div className="mt-4 flex flex-col">
+          <label className='editLabelModal'>Ссылка на сайт</label>
+          <input
             value={serviceData.resultSiteLink}
             onChange={(e) => setServiceData((prevState) => ({ ...prevState, resultSiteLink: e.target.value }))}
             required
+            className='mt-[10px] input_modal'
           />
         </div>
 
-        <div className="mt-4">
-          <label>Ссылка на Instagram</label>
-          <Input
+        <div className="mt-4 flex flex-col">
+          <label className='editLabelModal'>Ссылка на Instagram</label>
+          <input
             value={serviceData.resultInstagramLink}
             onChange={(e) => setServiceData((prevState) => ({ ...prevState, resultInstagramLink: e.target.value }))}
             required
+            className='mt-[10px] input_modal'
           />
         </div>
 
-        <div className="mt-4">
-          <label>Ссылка на Telegram</label>
-          <Input
+        <div className="mt-4 flex flex-col">
+          <label className='editLabelModal'>Ссылка на Telegram</label>
+          <input
             value={serviceData.resultTelegramLink}
             onChange={(e) => setServiceData((prevState) => ({ ...prevState, resultTelegramLink: e.target.value }))}
             required
+            className='mt-[10px]  input_modal'
           />
         </div>
 
-        {/* Error Handling */}
+        {/* Xatolikni ko'rsatish */}
         {error && <p className="text-red-500">{error}</p>}
 
-        {/* Submit Button */}
+        {/* Yuborish tugmasi */}
         <div className="w-full flex justify-end">
           <Button
             htmlType="submit"

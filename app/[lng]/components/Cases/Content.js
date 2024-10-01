@@ -9,9 +9,12 @@ import { FaPlus } from "react-icons/fa6";
 import caseDescription from "@/public/images/Vector.png";
 import { CaseCreateModal } from "../Create/case.create";
 import { getAllCases } from "../../lib/api/get.api";
-import { useParams } from 'next/navigation'
+import { useParams } from 'next/navigation';
+import { deleteCase } from '../../lib/api/delete.api';
+import toastr from 'toastr';
+import { useRouter } from 'next/navigation';
 
-// Items for filtering
+// Filtrlash uchun elementlar
 const items = [
   { id: 1, name: "Все", typeID: null },
   { id: 2, name: "Сайты", typeID: 1 },
@@ -23,38 +26,35 @@ const items = [
 ];
 
 const Content = () => {
-  const [selected, setSelected] = useState(1); // Default selection is "Все"
-  const [filteredData, setFilteredData] = useState([]); // State for filtered data
+  const [selected, setSelected] = useState(1); // Default tanlov "Все"
+  const [filteredData, setFilteredData] = useState([]); // Filtrlash uchun ma'lumotlar
   const [modal, setModal] = useState(false);
   const mobileSpansRef = useRef([]);
   const desktopSpansRef = useRef([]);
-  console.log(filteredData , 'dsf');
-  const {lng} = useParams()
-  // Fetch and set data on initial render
+  const router = useRouter();
+  const { lng } = useParams();
+
+  // Ma'lumotlarni olish funksiyasi
+  const fetchData = async (typeID = null) => {
+    try {
+      const responseData = await getAllCases(typeID, lng);
+      setFilteredData(responseData || []);
+    } catch (error) {
+      console.error("CASE'larni olishda xatolik yuz berdi:", error.message);
+    }
+  };
+
+  // Dastlabki ma'lumotlarni olish
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const responseData = await getAllCases(null , lng); // Fetch data with null typeID for default case
-        setFilteredData(responseData || []);
-      } catch (error) {
-        console.error("Error fetching cases:", error.message);
-      }
-    };
     fetchData();
   }, [lng]);
 
   const handleSelect = async (id, typeID) => {
     setSelected(id);
-    // Fetch filtered data based on the selected typeID
-    try {
-      const responseData = await getAllCases(lng, typeID);
-      setFilteredData(responseData || []);
-    } catch (error) {
-      console.error("Error filtering cases:", error.message);
-    }
+    await fetchData(typeID);
   };
 
-  // GSAP animation effect for menu
+  // GSAP animatsiyasi
   useEffect(() => {
     if (mobileSpansRef.current[selected]) {
       gsap.fromTo(
@@ -86,9 +86,19 @@ const Content = () => {
   const openCreateModal = () => setModal(true);
   const closeCreateModal = () => setModal(false);
 
+  const DeleteCase = async (id) => {
+    try {
+      await deleteCase(id);
+      await fetchData(); // O'chirishdan so'ng ma'lumotlarni yangilash
+      toastr.success("CASE muvaffaqiyatli o'chirildi!");
+    } catch (error) {
+      toastr.error(error.message);
+    }
+  };
+
   return (
     <div className="w-full">
-      {/* Mobile Carousel for Filter Options */}
+      {/* Mobil filtr variantlari */}
       <div className="lg:hidden w-full px-[16px] py-[20px]">
         <Carousel responsive={responsive} arrows={false} showDots={false} infinite={false}>
           {items?.map((item) => (
@@ -112,7 +122,7 @@ const Content = () => {
         </Carousel>
       </div>
 
-      {/* Desktop Filter Options */}
+      {/* Desktop filtr variantlari */}
       <div className="hidden lg:flex lg:gap-[50px] py-[30px] px-[20px]">
         {items.map((item) => (
           <div key={item.id} className="text-center">
@@ -135,28 +145,33 @@ const Content = () => {
       </div>
 
       {/* CREATE MODAL */}
-      <CaseCreateModal isCloseCreateModal={closeCreateModal} visible={modal} />
+      <CaseCreateModal
+        isCloseCreateModal={closeCreateModal}
+        visible={modal}
+        onCreateSuccess={fetchData} // Ma'lumotlarni yangilash funksiyasini uzatish
+      />
 
-      {/* Cards Section (Filtered Data) */}
+      {/* Karta bo'limi (Filtrlangan ma'lumotlar) */}
       <div className="mx-[16px] 3xl:flex 3xl:flex-row 3xl:flex-wrap 3xl:gap-[100px] 3xl:mx-[30px]">
         {filteredData.map((item, idx) => (
-          <Link
-            href={`/cases/${item.id}`}
+          <div
             key={idx}
-            className="w-full mt-[20px] 3xl:w-[45%] 6xl:max-w-[99%] relative group cursor-pointer"
+            className="w-full mt-[20px] 3xl:w-[45%] 6xl:max-w-[99%] relative group cursor-pointer group"
           >
             <div className="relative">
-            {item.slider.length > 0 && item.slider[0]?.url && (
-                <Image
-                  src={item.slider[0].url}
-                  width={1500}
-                  height={900}
-                  quality={100}
-                  alt="banner image"
-                  className="object-cover w-full h-full"
-                />
+              {item.slider.length > 0 && item.slider[0]?.url && (
+                <Link href={`/cases/${item.id}`}>
+                  <Image
+                    src={item.slider[0].url}
+                    width={1500}
+                    height={900}
+                    quality={100}
+                    alt="banner image"
+                    className="object-cover w-full h-full"
+                  />
+                </Link>
               )}
-              {/* Hidden content that appears on hover */}
+              {/* Hover qilinganda ko'rinadigan kontent */}
               <div className="hidden 3xl:absolute top-0 left-0 w-full h-full bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 3xl:flex justify-center items-center">
                 <div className="h-[100px]">
                   <div className="flex flex-row gap-[80px] items-center justify-center">
@@ -196,8 +211,15 @@ const Content = () => {
                   </React.Fragment>
                 ))}
               </p>
+
+              <button
+                onClick={() => DeleteCase(item.id)}
+                className="rounded-[10px] bg-red-500 text-[18px] font-montserrat text-white font-bold text-center w-[30%] py-[15px] px-[20px] mt-[30px] opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+              >
+                Удалить
+              </button>
             </div>
-          </Link>
+          </div>
         ))}
 
         <button

@@ -41,3 +41,18 @@ textarea:focus  {
 	height: 110px !important;
 
 }
+
+
+
+.editLabelModal {
+	color: #A6A6A6;
+	font-size: 16px;
+	font-weight: 500;
+}
+
+.input_modal {
+	border: 1px solid #F0F0F0;
+	outline-color: #7B72EB;
+	font-size: 18px;
+	color: black;
+}
