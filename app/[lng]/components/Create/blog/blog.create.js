@@ -1,40 +1,40 @@
 import { useState } from 'react'
 import { Modal, Upload } from 'antd'
 import { MdDeleteForever } from 'react-icons/md'
-import { createBlog } from '../../../lib/api/create.api'
 import toastr from 'toastr'
 import 'toastr/build/toastr.min.css'
 import { lang } from '../../constants/langugaes'
 import { IoIosAddCircleOutline } from 'react-icons/io'
 import { IoClose } from 'react-icons/io5'
 
-export const BlogCreateModal = ({ close, open }) => {
+export const BlogCreateModal = ({ close, open, setNewBlogMultiple }) => {
 	const [currentLang, setCurrentLang] = useState('ru')
 	const [loading, setLoading] = useState(false)
 	const [error, setError] = useState(null)
-
 	const [blogData, setBlogData] = useState({
 		option: [
 			{
 				title: { uz: '', ru: '', en: '' },
-				text: { uz: '', ru: '', en: '' },
+				text: { uz: '', ru: '', en: '' }, // Using 'text' instead of 'description'
 				photo: null,
 				orderNum: 0,
 			},
 		],
-		relatedId: [],
+		main: true, // Always true
+		active: true, // Always true
+		relatedId: [], // Related IDs
 	})
 
 	const handleInputChange = (e, index, field) => {
-		const updatedoption = [...blogData.option]
-		updatedoption[index][field][currentLang] = e.target.value
-		setBlogData({ ...blogData, option: updatedoption })
+		const updatedOption = [...blogData.option]
+		updatedOption[index][field][currentLang] = e.target.value
+		setBlogData({ ...blogData, option: updatedOption })
 	}
 
 	const handlePhotoUpload = (info, index) => {
-		const updatedoption = [...blogData.option]
-		updatedoption[index].photo = info.file
-		setBlogData({ ...blogData, option: updatedoption })
+		const updatedOption = [...blogData.option]
+		updatedOption[index].photo = info.file
+		setBlogData({ ...blogData, option: updatedOption })
 	}
 
 	const handleAddOption = () => {
@@ -44,7 +44,7 @@ export const BlogCreateModal = ({ close, open }) => {
 				...prevData.option,
 				{
 					title: { uz: '', ru: '', en: '' },
-					text: { uz: '', ru: '', en: '' },
+					text: { uz: '', ru: '', en: '' }, // Changed to 'text'
 					photo: null,
 					orderNum: 0,
 				},
@@ -53,8 +53,8 @@ export const BlogCreateModal = ({ close, open }) => {
 	}
 
 	const handleRemoveOption = index => {
-		const updatedoption = blogData.option.filter((_, i) => i !== index)
-		setBlogData({ ...blogData, option: updatedoption })
+		const updatedOption = blogData.option.filter((_, i) => i !== index)
+		setBlogData({ ...blogData, option: updatedOption })
 	}
 
 	const handleRelatedIdChange = e => {
@@ -65,36 +65,15 @@ export const BlogCreateModal = ({ close, open }) => {
 	const handleSubmit = async e => {
 		e.preventDefault()
 		setLoading(true)
-		setError(null) // Reset error state before submission
+		setError(null)
 
 		try {
-			const jsonData = {
-				option: blogData.option.map((option, index) => ({
-					title: option.title,
-					text: option.text,
-					orderNum: index,
-				})),
-				relatedId: blogData.relatedId.length > 0 ? blogData.relatedId : [0],
-				main: true,
-				active: true,
-			}
-
-			const formData = new FormData()
-			formData.append('json', JSON.stringify(jsonData))
-
-			blogData.option.forEach(option => {
-				if (option.photo instanceof File) {
-					formData.append('photo', option.photo)
-				}
-			})
-
-			await createBlog(formData)
+			await setNewBlogMultiple(blogData)
 			toastr.success('Blog created successfully')
-			close() // Close modal after success
+			close()
 		} catch (error) {
 			toastr.error('Error creating blog')
 			setError(error.message)
-			console.error('Submission error:', error)
 		} finally {
 			setLoading(false)
 		}
@@ -113,105 +92,85 @@ export const BlogCreateModal = ({ close, open }) => {
 			}
 			closeIcon={<IoClose size={30} />}
 		>
-			<form onSubmit={handleSubmit} className='mt-[30px]'>
+			<form onSubmit={handleSubmit}>
 				<div className='language-switcher flex gap-2 mb-4'>
-					{lang.map(lang => (
+					{lang.map(language => (
 						<button
-							key={lang}
+							key={language}
 							type='button'
 							className={`px-4 py-2 rounded-lg ${
-								currentLang === lang ? 'bg-violet100 text-white' : 'bg-gray-200'
+								currentLang === language
+									? 'bg-violet100 text-white'
+									: 'bg-gray-200'
 							}`}
-							onClick={() => setCurrentLang(lang)}
+							onClick={() => setCurrentLang(language)}
 						>
-							{lang.toUpperCase()}
+							{language.toUpperCase()}
 						</button>
 					))}
 				</div>
 
 				{blogData.option.map((option, index) => (
 					<div key={index} className='option-block mb-4 p-4 border rounded-lg'>
-						<div className='flex gap-4 mb-2 flex-col'>
-							<div className='flex flex-col'>
-								<label
-									className='text-[#A6A6A6] font-robotoFlex font-medium
-                 text-[16px]'
-								>
-									Заголовок статьи ({currentLang.toUpperCase()})
-								</label>
-								<input
-									value={option.title[currentLang]}
-									onChange={e => handleInputChange(e, index, 'title')}
-									required
-									className='mt-[10px]  rounded-[20px] border border-[#F0F0F0]'
-								/>
-							</div>
-
-							<div className='flex flex-col'>
-								<label
-									className='text-[#A6A6A6] font-robotoFlex font-medium
-                 text-[16px]'
-								>
-									Текст ({currentLang.toUpperCase()})
-								</label>
-								<textarea
-									value={option.text[currentLang]}
-									onChange={e => handleInputChange(e, index, 'text')}
-									required
-									className='mt-[10px] rounded-[20px] border border-[#F0F0F0]'
-								/>
-							</div>
+						<div className='flex flex-col'>
+							<label className='text-[#A6A6A6] font-medium'>
+								Заголовок статьи ({currentLang.toUpperCase()})
+							</label>
+							<input
+								value={option.title[currentLang]}
+								onChange={e => handleInputChange(e, index, 'title')}
+								required
+								className='mt-[10px] rounded-[20px] border border-[#F0F0F0]'
+							/>
 						</div>
 
-						<div className='flex flex-col mt-[20px] '>
-							<label className='text-[18px] font-montserrat font-semibold text-[#000]'>
-								Изображение
+						<div className='flex flex-col mt-[10px]'>
+							<label className='text-[#A6A6A6] font-medium'>
+								Текст ({currentLang.toUpperCase()})
 							</label>
-							<Upload
-								name='photo'
-								listType='picture-card'
-								beforeUpload={() => false}
-								onChange={info => handlePhotoUpload(info, index)}
-								showUploadList={false}
-								className='mt-[10px]'
-							>
-								{option.photo ? (
-									<img
-										src={URL.createObjectURL(option.photo)}
-										alt='option'
-										style={{ width: '100px' }}
-									/>
-								) : (
-									<div className='w-[40px] h-[40px] flex items-center justify-center'>
-										<IoIosAddCircleOutline
-											className='text-violet100'
-											size={50}
-										/>
-									</div>
-								)}
-							</Upload>
-							{option.photo && (
-								<MdDeleteForever
-									size={24}
-									className='text-red-600 cursor-pointer'
-									onClick={() => handlePhotoUpload({ file: null }, index)}
+							<textarea
+								value={option.text[currentLang]} // Changed to 'text'
+								onChange={e => handleInputChange(e, index, 'text')} // Changed to handle 'text'
+								required
+								className='mt-[10px] rounded-[20px] border border-[#F0F0F0]'
+							/>
+						</div>
+
+						<Upload
+							name='photo'
+							listType='picture-card'
+							beforeUpload={() => false}
+							onChange={info => handlePhotoUpload(info, index)}
+							showUploadList={false}
+							className='mt-[10px]'
+						>
+							{option.photo ? (
+								<img
+									src={URL.createObjectURL(option.photo)}
+									alt='option'
+									style={{ width: '100px' }}
 								/>
+							) : (
+								<div className='w-[40px] h-[40px] flex items-center justify-center'>
+									<IoIosAddCircleOutline className='text-violet100' size={50} />
+								</div>
 							)}
-              	{blogData.option.length > 1 && (
+						</Upload>
+
 						<button
-							className='w-[30%] mt-[20px] text-center text-white100 font-medium text-[18px] py-[15px] px-[20px] bg-red-500 rounded-full ml-[10px]'
+							type='button'
+							className='mt-[10px] text-red-500 flex items-center gap-2'
 							onClick={() => handleRemoveOption(index)}
 						>
+							<MdDeleteForever size={24} />
 							Удалить опцию
 						</button>
-					)}
-						</div>
 					</div>
 				))}
 
 				<div className='mb-4 flex flex-col gap-[8px]'>
 					<label className='text-[18px] font-montserrat font-semibold text-[#000]'>
-          похожие  (ID)
+						похожие (ID)
 					</label>
 					<input
 						placeholder='например (1 , 2 , 3 , .....)'
@@ -229,17 +188,15 @@ export const BlogCreateModal = ({ close, open }) => {
 					</button>
 
 					{error && <p className='text-red-500'>{error}</p>}
-
-				
 				</div>
 
-				<div className='flex items-center justify-end'>
+				<div className='flex justify-end'>
 					<button
 						type='submit'
-						loading={loading}
-						className='w-[30%] font-bold rounded-full mt-4 py-[20px] px-[30px] font-montserrat bg-violet100 text-white'
+						className='rounded-full mt-4 py-[20px] px-[30px] font-bold bg-violet100 text-white'
+						disabled={loading}
 					>
-						{loading ? 'сохраняется' : 'Сохранить'}
+						{loading ? 'сохраняется...' : 'Сохранить'}
 					</button>
 				</div>
 			</form>

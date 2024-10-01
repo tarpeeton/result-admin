@@ -1,13 +1,16 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { Modal, Upload } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
+// import { UploadOutlined } from '@ant-design/icons';
 import toastr from 'toastr';
 import 'toastr/build/toastr.min.css';
 import { updateBlog, editImage } from '@/app/[lng]/lib/api/edit.api';
 import { useRouter } from 'next/navigation';
 import { IoClose } from 'react-icons/io5';
 import { IoIosAddCircleOutline } from "react-icons/io";
+
+
+
 export const EditBlog = ({
     isCloseCreateModal,
     visible,
@@ -18,7 +21,7 @@ export const EditBlog = ({
     imageID,
     imageURL, // Provide the existing image URL for preview
     orderNumData, // Provide existing orderNum value
-}) => {
+}) => { 
     const [currentLang, setCurrentLang] = useState('ru');
     const router = useRouter();
     const [fileList, setFileList] = useState([]); // State for the image upload
